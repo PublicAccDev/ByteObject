@@ -1,6 +1,6 @@
 package org.pacc.ByteObj.Container;
 
-import org.pacc.ByteObj.ByteObject;
+import org.pacc.ByteObj.BasicByteObject;
 import org.pacc.ByteObj.CacheByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
@@ -13,7 +13,7 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class BLinkedHashSet<ByteObj extends ByteObject<?>> extends CacheByteObj<LinkedHashSet<ByteObj>>
+public class BLinkedHashSet<ByteObj extends BasicByteObject<?>> extends CacheByteObj<LinkedHashSet<ByteObj>>
 {
     private final Constructor<ByteObj> constructor;
 

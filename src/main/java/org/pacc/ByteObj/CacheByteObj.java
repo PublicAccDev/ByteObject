@@ -7,7 +7,7 @@ package org.pacc.ByteObj;
  *
  * @param <ObjectType> The type of the object to be serialized/deserialized
  */
-public abstract class CacheByteObj<ObjectType> extends ByteObject<ObjectType>
+public abstract class CacheByteObj<ObjectType> extends BasicByteObject<ObjectType>
 {
 
     private byte[] cacheBytes = null;

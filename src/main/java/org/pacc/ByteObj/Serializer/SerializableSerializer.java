@@ -1,22 +1,17 @@
-package org.pacc.ByteObj;
+package org.pacc.ByteObj.Serializer;
+
+import org.pacc.ByteObj.Exception.InvalidFormatException;
 
 import java.io.*;
 
-public class UniversalByteObj<ObjectType> extends CacheByteObj<ObjectType>
+public class SerializableSerializer
 {
-    public UniversalByteObj(ObjectType object)
+    public static byte[] serialize(Object object)
     {
-        super(object);
-    }
-
-    public UniversalByteObj(byte[] objectBytesData)
-    {
-        super(objectBytesData);
-    }
-
-    @Override
-    public byte[] serialize(ObjectType object)
-    {
+        if(!(object instanceof Serializable))
+        {
+            throw new InvalidFormatException(object);
+        }
         try(ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream())
         {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
@@ -28,17 +23,15 @@ public class UniversalByteObj<ObjectType> extends CacheByteObj<ObjectType>
         }
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public ObjectType deserialize(byte[] objectBytesData)
+    public static Object deserialize(byte[] objectBytesData) throws InvalidFormatException
     {
         try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(objectBytesData))
         {
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-            return (ObjectType) objectInputStream.readObject();
+            return objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e)
         {
-            throw new RuntimeException(e);
+            throw new InvalidFormatException(e);
         }
     }
 }

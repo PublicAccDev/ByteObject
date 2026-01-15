@@ -1,9 +1,17 @@
 package org.pacc.ByteObj.BasicData;
 
 import org.pacc.ByteObj.CacheByteObj;
+import org.pacc.ByteObj.Exception.InvalidFormatException;
+import org.pacc.ByteObj.Serializer.SerializableSerializer;
 
-public class BByteArray extends CacheByteObj<byte[]>
+import java.io.Serializable;
+
+public class BByteArray extends CacheByteObj<Byte[]> implements Serializable
 {
+    public BByteArray(Byte[] object)
+    {
+        super(object);
+    }
 
     public BByteArray(byte[] objectBytesData)
     {
@@ -11,14 +19,20 @@ public class BByteArray extends CacheByteObj<byte[]>
     }
 
     @Override
-    public byte[] serialize(byte[] object)
+    public byte[] serialize(Byte[] object)
     {
-        return object;
+        return SerializableSerializer.serialize(object);
     }
 
     @Override
-    public byte[] deserialize(byte[] objectBytesData)
+    public Byte[] deserialize(byte[] objectBytesData)
     {
-        return objectBytesData;
+        try
+        {
+            return (Byte[]) SerializableSerializer.deserialize(objectBytesData);
+        } catch (ClassCastException e)
+        {
+            throw new InvalidFormatException(e, Byte[].class);
+        }
     }
 }

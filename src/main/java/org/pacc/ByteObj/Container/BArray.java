@@ -1,13 +1,13 @@
 package org.pacc.ByteObj.Container;
 
-import org.pacc.ByteObj.ByteObject;
+import org.pacc.ByteObj.BasicByteObject;
 import org.pacc.ByteObj.CacheByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
 
 import java.lang.reflect.Constructor;
 
-public class BArray<ByteObj extends ByteObject<?>> extends CacheByteObj<ByteObj[]>
+public class BArray<ByteObj extends BasicByteObject<?>> extends CacheByteObj<ByteObj[]>
 {
     private final Constructor<ByteObj> constructor;
     private final Class<ByteObj> clazz;

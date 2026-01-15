@@ -1,19 +1,24 @@
 package org.pacc.ByteObj;
 
+import org.pacc.ByteObj.BasicData.BString;
 import org.pacc.ByteObj.Format.Object.CSVObj;
 import org.pacc.ByteObj.Format.Object.Json.*;
 import org.pacc.ByteObj.Format.Object.Json.Value.*;
+import org.pacc.ByteObj.Serializer.SerializableSerializer;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Test
 {
     public static void main(String[] args)
     {
-        testMethod4();
+        testMethod5();
     }
 
     private static void testMethod1()
@@ -62,6 +67,15 @@ public class Test
 
     private static void testMethod4()
     {
-        System.out.println(String.valueOf("666"));
+        BString bstr = new BString("Hello World!");
+        System.out.println(bstr.getObject());
+    }
+
+    private static void testMethod5()
+    {
+        long s = System.currentTimeMillis();
+
+        long e = System.currentTimeMillis();
+        System.out.println("Time: " + (e-s) + " ms");
     }
 }

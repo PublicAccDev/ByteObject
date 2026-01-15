@@ -1,6 +1,6 @@
 package org.pacc.ByteObj.Container;
 
-import org.pacc.ByteObj.ByteObject;
+import org.pacc.ByteObj.BasicByteObject;
 import org.pacc.ByteObj.CacheByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
@@ -15,7 +15,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class BLinkedHashMap<Key extends ByteObject<?>, Value extends ByteObject<?>> extends CacheByteObj<LinkedHashMap<Key, Value>>
+public class BLinkedHashMap<Key extends BasicByteObject<?>, Value extends BasicByteObject<?>> extends CacheByteObj<LinkedHashMap<Key, Value>>
 {
 
     private final Constructor<Key> keyConstructor;

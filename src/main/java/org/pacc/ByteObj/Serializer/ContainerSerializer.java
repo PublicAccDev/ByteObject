@@ -1,6 +1,6 @@
 package org.pacc.ByteObj.Serializer;
 
-import org.pacc.ByteObj.ByteObject;
+import org.pacc.ByteObj.BasicByteObject;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -11,7 +11,7 @@ import java.util.*;
 public class ContainerSerializer
 {
 
-    public static <ByteObj extends ByteObject<?>> byte[] serialize(ByteObj[] objects)
+    public static <ByteObj extends BasicByteObject<?>> byte[] serialize(ByteObj[] objects)
     {
         int totalLength = 0;
         for (ByteObj obj : objects)
@@ -29,7 +29,7 @@ public class ContainerSerializer
     }
 
     @SuppressWarnings("unchecked")
-    public static <ByteObj extends ByteObject<?>> ByteObj[] deserializeArray(byte[] data, Class<ByteObj> clazz, Constructor<ByteObj> constructor)
+    public static <ByteObj extends BasicByteObject<?>> ByteObj[] deserializeArray(byte[] data, Class<ByteObj> clazz, Constructor<ByteObj> constructor)
     {
         try
         {
@@ -51,7 +51,7 @@ public class ContainerSerializer
         }
     }
 
-    public static <ByteObj extends ByteObject<?>> byte[] serialize(List<ByteObj> list)
+    public static <ByteObj extends BasicByteObject<?>> byte[] serialize(List<ByteObj> list)
     {
         int totalLength = 0;
         for (ByteObj obj : list)
@@ -65,7 +65,7 @@ public class ContainerSerializer
         return buffer.array();
     }
 
-    public static <ByteObj extends ByteObject<?>> ArrayList<ByteObj> deserializeArrayList(byte[] data, Constructor<ByteObj> constructor)
+    public static <ByteObj extends BasicByteObject<?>> ArrayList<ByteObj> deserializeArrayList(byte[] data, Constructor<ByteObj> constructor)
     {
         try
         {
@@ -87,7 +87,7 @@ public class ContainerSerializer
         }
     }
 
-    public static <ByteObj extends ByteObject<?>> byte[] serialize(HashSet<ByteObj> set)
+    public static <ByteObj extends BasicByteObject<?>> byte[] serialize(HashSet<ByteObj> set)
     {
         int totalLength = 0;
         for (ByteObj obj : set)
@@ -101,7 +101,7 @@ public class ContainerSerializer
         return buffer.array();
     }
 
-    public static <ByteObj extends ByteObject<?>> HashSet<ByteObj> deserializeHashSet(byte[] data, Constructor<ByteObj> constructor)
+    public static <ByteObj extends BasicByteObject<?>> HashSet<ByteObj> deserializeHashSet(byte[] data, Constructor<ByteObj> constructor)
     {
         try
         {
@@ -123,7 +123,7 @@ public class ContainerSerializer
         }
     }
 
-    public static <Key extends ByteObject<?>, Value extends ByteObject<?>> byte[] serialize(HashMap<Key, Value> map)
+    public static <Key extends BasicByteObject<?>, Value extends BasicByteObject<?>> byte[] serialize(HashMap<Key, Value> map)
     {
         int totalLength = 0;
         for (Map.Entry<Key, Value> entry : map.entrySet())
@@ -139,7 +139,7 @@ public class ContainerSerializer
         return buffer.array();
     }
 
-    public static <Key extends ByteObject<?>, Value extends ByteObject<?>> HashMap<Key, Value> deserializeHashMap(byte[] data, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
+    public static <Key extends BasicByteObject<?>, Value extends BasicByteObject<?>> HashMap<Key, Value> deserializeHashMap(byte[] data, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
     {
         try
         {
@@ -163,7 +163,7 @@ public class ContainerSerializer
         }
     }
 
-    public static <ByteObj extends ByteObject<?>> byte[] serialize(LinkedHashSet<ByteObj> set)
+    public static <ByteObj extends BasicByteObject<?>> byte[] serialize(LinkedHashSet<ByteObj> set)
     {
         int totalLength = 0;
         for (ByteObj obj : set)
@@ -177,7 +177,7 @@ public class ContainerSerializer
         return buffer.array();
     }
 
-    public static <ByteObj extends ByteObject<?>> LinkedHashSet<ByteObj> deserializeLinkedHashSet(byte[] data, Constructor<ByteObj> constructor)
+    public static <ByteObj extends BasicByteObject<?>> LinkedHashSet<ByteObj> deserializeLinkedHashSet(byte[] data, Constructor<ByteObj> constructor)
     {
         try
         {
@@ -199,7 +199,7 @@ public class ContainerSerializer
         }
     }
 
-    public static <Key extends ByteObject<?>, Value extends ByteObject<?>> byte[] serialize(LinkedHashMap<Key, Value> map)
+    public static <Key extends BasicByteObject<?>, Value extends BasicByteObject<?>> byte[] serialize(LinkedHashMap<Key, Value> map)
     {
         int totalLength = 0;
         for (Map.Entry<Key, Value> entry : map.entrySet())
@@ -215,7 +215,7 @@ public class ContainerSerializer
         return buffer.array();
     }
 
-    public static <Key extends ByteObject<?>, Value extends ByteObject<?>> LinkedHashMap<Key, Value> deserializeLinkedHashMap(byte[] data, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
+    public static <Key extends BasicByteObject<?>, Value extends BasicByteObject<?>> LinkedHashMap<Key, Value> deserializeLinkedHashMap(byte[] data, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
     {
         try
         {

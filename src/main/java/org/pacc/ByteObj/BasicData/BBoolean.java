@@ -2,38 +2,40 @@ package org.pacc.ByteObj.BasicData;
 
 import org.pacc.ByteObj.CacheByteObj;
 import org.pacc.ByteObj.Exception.InvalidFormatException;
-import org.pacc.ByteObj.Serializer.BasicDataSerializer;
 import org.pacc.ByteObj.Serializer.SerializableSerializer;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public class BFloat extends CacheByteObj<Float> implements Serializable
+public class BBoolean extends CacheByteObj<Boolean> implements Serializable
 {
-    public BFloat(Float object)
+    public BBoolean(Boolean object)
     {
         super(object);
     }
 
-    public BFloat(byte[] objectBytesData)
+    public BBoolean(byte[] objectBytesData)
     {
         super(objectBytesData);
     }
 
     @Override
-    public byte[] serialize(Float object)
+    public byte[] serialize(Boolean object)
     {
         return SerializableSerializer.serialize(object);
     }
 
     @Override
-    public Float deserialize(byte[] objectBytesData) throws InvalidFormatException
+    public Boolean deserialize(byte[] objectBytesData)
     {
         try
         {
-            return (Float) SerializableSerializer.deserialize(objectBytesData);
+            return (Boolean) SerializableSerializer.deserialize(objectBytesData);
         } catch (ClassCastException e)
         {
-            throw new InvalidFormatException(e, Float.class);
+            throw new InvalidFormatException(e, Boolean.class);
         }
     }
 
