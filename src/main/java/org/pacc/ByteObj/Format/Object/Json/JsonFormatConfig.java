@@ -5,11 +5,16 @@ import lombok.Getter;
 
 public class JsonFormatConfig
 {
-    @Getter private final JsonFormatOption option;
-    @Getter private final String indent;
-    @Getter private final boolean spaceAfterColon;
-    @Getter private final boolean spaceAfterComma;
-    @Getter private final int maxLineWidth;
+    @Getter
+    private final JsonFormatOption option;
+    @Getter
+    private final String indent;
+    @Getter
+    private final boolean spaceAfterColon;
+    @Getter
+    private final boolean spaceAfterComma;
+    @Getter
+    private final int maxLineWidth;
 
     public JsonFormatConfig(Builder builder)
     {

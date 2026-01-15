@@ -1,12 +1,10 @@
 package org.pacc.ByteObj.Serializer;
 
-import org.pacc.ByteObj.Container.BArray;
 import org.pacc.ByteObj.Format.Object.CSVObj;
 import org.pacc.ByteObj.Format.Object.Json.Value.*;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 public class FormatObjSerializer
 {
@@ -22,7 +20,7 @@ public class FormatObjSerializer
 
     public static byte[] serialize(JsonProperty property)
     {
-        byte[] name = BasicDataSerializer.serialize(property.getName(), StandardCharsets.UTF_8);
+        byte[] name = BasicDataSerializer.serialize(property.getName());
         int nameLength = name.length;
         byte[] reserved = new byte[0];
         switch (property.getValue())
@@ -62,7 +60,7 @@ public class FormatObjSerializer
             }
             case JsonString obj ->
             {
-                reserved = serialize(obj, StandardCharsets.UTF_8);
+                reserved = serialize(obj);
             }
         }
         ByteBuffer buffer = ByteBuffer.allocate(
@@ -156,9 +154,9 @@ public class FormatObjSerializer
         return null;
     }
 
-    public static byte[] serialize(JsonString object, Charset charset)
+    public static byte[] serialize(JsonString object)
     {
-        byte[] str = BasicDataSerializer.serialize(object.getValue(), charset);
+        byte[] str = BasicDataSerializer.serialize(object.getValue());
         int length = str.length;
         ByteBuffer buffer = ByteBuffer.allocate(
                 4
@@ -169,10 +167,10 @@ public class FormatObjSerializer
         return buffer.array();
     }
 
-    public static JsonString deserializeJsonString(byte[] bytes, Charset charset)
+    public static JsonString deserializeJsonString(byte[] bytes)
     {
-        byte[] slice = new byte[bytes.length-4];
-        System.arraycopy(bytes, 4, slice, 0, bytes.length-4);
-        return new JsonString(BasicDataSerializer.deserializeString(slice, charset));
+        byte[] slice = new byte[bytes.length - 4];
+        System.arraycopy(bytes, 4, slice, 0, bytes.length - 4);
+        return new JsonString(BasicDataSerializer.deserializeString(slice));
     }
 }

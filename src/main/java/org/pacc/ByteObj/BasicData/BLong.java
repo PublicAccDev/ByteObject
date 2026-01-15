@@ -1,10 +1,10 @@
 package org.pacc.ByteObj.BasicData;
 
-import org.pacc.ByteObj.CacheByteObj;
+import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.InvalidFormatException;
 import org.pacc.ByteObj.Serializer.BasicDataSerializer;
 
-public class BLong extends CacheByteObj<Long>
+public class BLong extends DirectByteObj<Long>
 {
     public BLong(Long object)
     {
@@ -34,4 +34,5 @@ public class BLong extends CacheByteObj<Long>
         }
     }
 
+    
 }

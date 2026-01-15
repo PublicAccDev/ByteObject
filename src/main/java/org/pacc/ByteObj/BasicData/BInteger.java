@@ -1,10 +1,10 @@
 package org.pacc.ByteObj.BasicData;
 
-import org.pacc.ByteObj.CacheByteObj;
+import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.InvalidFormatException;
 import org.pacc.ByteObj.Serializer.BasicDataSerializer;
 
-public class BInteger extends CacheByteObj<Integer>
+public class BInteger extends DirectByteObj<Integer>
 {
     public BInteger(Integer object)
     {
@@ -34,4 +34,5 @@ public class BInteger extends CacheByteObj<Integer>
         }
     }
 
+    
 }

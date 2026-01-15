@@ -1,7 +1,7 @@
 package org.pacc.ByteObj.Format.ByteObject;
 
 import lombok.Setter;
-import org.pacc.ByteObj.CacheByteObj;
+import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Format.Object.CSVObj;
 import org.pacc.ByteObj.Serializer.FormatObjSerializer;
 
@@ -9,7 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-public class BCSVObj extends CacheByteObj<CSVObj>
+public class BCSVObj extends DirectByteObj<CSVObj>
 {
     @Setter
     private Charset charset;

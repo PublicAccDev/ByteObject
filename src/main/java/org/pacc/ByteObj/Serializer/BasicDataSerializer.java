@@ -1,7 +1,6 @@
 package org.pacc.ByteObj.Serializer;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 
 public class BasicDataSerializer
 {
@@ -16,14 +15,14 @@ public class BasicDataSerializer
         return bytes[0] == 1;
     }
 
-    public static byte[] serialize(char[] chars, Charset charset)
+    public static byte[] serialize(char[] chars)
     {
-        return new String(chars).getBytes(charset);
+        return new String(chars).getBytes();
     }
 
-    public static char[] deserializeChars(byte[] bytes, Charset charset)
+    public static char[] deserializeChars(byte[] bytes)
     {
-        return new String(bytes, charset).toCharArray();
+        return new String(bytes).toCharArray();
     }
 
     public static byte[] serialize(double value)
@@ -66,13 +65,13 @@ public class BasicDataSerializer
         return ByteBuffer.wrap(bytes).getLong();
     }
 
-    public static byte[] serialize(String value, Charset charset)
+    public static byte[] serialize(String value)
     {
-        return value.getBytes(charset);
+        return value.getBytes();
     }
 
-    public static String deserializeString(byte[] bytes, Charset charset)
+    public static String deserializeString(byte[] bytes)
     {
-        return new String(bytes, charset);
+        return new String(bytes);
     }
 }

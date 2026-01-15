@@ -1,8 +1,8 @@
 package org.pacc.ByteObj.Container;
 
-import org.pacc.ByteObj.BasicByteObject;
-import org.pacc.ByteObj.CacheByteObj;
+import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
+import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
 
 import java.lang.reflect.Constructor;
@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-public class BArrayList<ByteObj extends BasicByteObject<?>> extends CacheByteObj<ArrayList<ByteObj>>
+public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<ArrayList<ByteObj>>
 {
     private final Constructor<ByteObj> constructor;
 
@@ -25,7 +25,7 @@ public class BArrayList<ByteObj extends BasicByteObject<?>> extends CacheByteObj
         super(object);
         try
         {
-            constructor = (Constructor<ByteObj>) object.getClass().getComponentType().getConstructor(byte[].class);
+            this.constructor = (Constructor<ByteObj>) object.getClass().getComponentType().getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(object.getClass().getComponentType());
@@ -37,7 +37,7 @@ public class BArrayList<ByteObj extends BasicByteObject<?>> extends CacheByteObj
         super(object);
         try
         {
-            constructor = clazz.getConstructor(byte[].class);
+            this.constructor = clazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(clazz);
@@ -49,7 +49,7 @@ public class BArrayList<ByteObj extends BasicByteObject<?>> extends CacheByteObj
         super(new byte[0]);
         try
         {
-            constructor = clazz.getConstructor(byte[].class);
+            this.constructor = clazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(clazz);
@@ -65,7 +65,7 @@ public class BArrayList<ByteObj extends BasicByteObject<?>> extends CacheByteObj
     @Override
     public ArrayList<ByteObj> deserialize(byte[] objectBytesData)
     {
-        return ContainerSerializer.deserializeArrayList(objectBytesData, constructor);
+        return ContainerSerializer.deserializeArrayList(objectBytesData, this.constructor);
     }
 
     public ByteObj get(int index)

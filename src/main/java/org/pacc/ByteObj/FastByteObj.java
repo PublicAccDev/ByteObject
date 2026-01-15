@@ -1,13 +1,12 @@
 package org.pacc.ByteObj;
 
 /**
- * A ByteObject that caches both the object and its serialized byte array.
+ * Abstract base class extends {@link BaseByteObj} that caches both the object and its serialized byte array to improve performances
  *
- * <p>This improves performance by avoiding repeated serialization/deserialization.
- *
- * @param <ObjectType> The type of the object to be serialized/deserialized
+ * @param <ObjectType> The type of object to be serialized/deserialized
+ * @implSpec {@link #serialize(Object)} {@link #deserialize(byte[])}
  */
-public abstract class CacheByteObj<ObjectType> extends BasicByteObject<ObjectType>
+public abstract class FastByteObj<ObjectType> extends BaseByteObj<ObjectType>
 {
 
     private byte[] cacheBytes = null;
@@ -16,7 +15,7 @@ public abstract class CacheByteObj<ObjectType> extends BasicByteObject<ObjectTyp
     private boolean dirtyBytes;
     private boolean dirtyObject = true;
 
-    public CacheByteObj(ObjectType object)
+    public FastByteObj(ObjectType object)
     {
         super(object);
         this.cacheObject = object;
@@ -24,14 +23,14 @@ public abstract class CacheByteObj<ObjectType> extends BasicByteObject<ObjectTyp
         this.dirtyObject = false;
     }
 
-    public CacheByteObj(byte[] objectBytesData)
+    public FastByteObj(byte[] objectBytesData)
     {
         super(objectBytesData);
         this.cacheBytes = objectBytesData;
         this.dirtyBytes = false;
     }
 
-    public CacheByteObj(byte[] objectBytesData, boolean ignoreThis)
+    public FastByteObj(byte[] objectBytesData, boolean ignoreThis)
     {
         super(objectBytesData);
         this.cacheBytes = objectBytesData;

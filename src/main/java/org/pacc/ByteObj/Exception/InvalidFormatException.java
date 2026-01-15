@@ -18,11 +18,6 @@ public class InvalidFormatException extends RuntimeException
         e.printStackTrace();
     }
 
-    public InvalidFormatException(Object o)
-    {
-        super("Object " + o.getClass().getName() + " is not serializable");
-    }
-
     public InvalidFormatException(ClassCastException e, Class<?> c)
     {
         super("Cannot deserialize bytes into " + c.getName());

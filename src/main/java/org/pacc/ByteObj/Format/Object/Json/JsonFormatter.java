@@ -13,7 +13,7 @@ public class JsonFormatter
                 .build());
     }
 
-    public static String format(String jsonString ,JsonFormatOption option)
+    public static String format(String jsonString, JsonFormatOption option)
     {
         return format(jsonString, new JsonFormatConfig.Builder()
                 .withOption(option)

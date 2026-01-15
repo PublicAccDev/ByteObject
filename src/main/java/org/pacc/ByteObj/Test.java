@@ -1,25 +1,26 @@
 package org.pacc.ByteObj;
 
-import org.pacc.ByteObj.BasicData.BBoolean;
+import org.pacc.ByteObj.BasicData.BInteger;
 import org.pacc.ByteObj.BasicData.BString;
+import org.pacc.ByteObj.Container.BArrayDeque;
+import org.pacc.ByteObj.Container.BHashMap;
 import org.pacc.ByteObj.Format.Object.CSVObj;
-import org.pacc.ByteObj.Format.Object.Json.*;
+import org.pacc.ByteObj.Format.Object.Json.JsonFormatConfig;
+import org.pacc.ByteObj.Format.Object.Json.JsonFormatOption;
+import org.pacc.ByteObj.Format.Object.Json.JsonFormatter;
 import org.pacc.ByteObj.Format.Object.Json.Value.*;
-import org.pacc.ByteObj.Serializer.SerializableSerializer;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayDeque;
 
 public class Test
 {
-    public static void main(String[] args)
+    static void main(String[] args)
     {
-        testMethod5();
+        testMethod4();
     }
 
     private static void testMethod1()
@@ -68,23 +69,21 @@ public class Test
 
     private static void testMethod4()
     {
-        BString bstr = new BString("Hello World!");
-        System.out.println(bstr.getObject());
+        ArrayDeque<BInteger> a = new ArrayDeque<>();
+        a.add(new BInteger(1));
+        a.add(new BInteger(2));
+        a.add(new BInteger(3));
+
+        BArrayDeque<BInteger> b = new BArrayDeque<>(a);
+
+        System.out.println(b);
     }
 
     private static void testMethod5()
     {
         long s = System.currentTimeMillis();
 
-        for(int i = 0; i < 1000000; i++)
-        {
-            Boolean b = false;
-            Boolean a = b;
-        }
-
-        System.out.println(Arrays.toString(SerializableSerializer.serialize(false)));
-
         long e = System.currentTimeMillis();
-        System.out.println("Time: " + (e-s) + " ms");
+        System.out.println("Time: " + (e - s) + " ms");
     }
 }

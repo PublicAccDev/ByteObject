@@ -2,7 +2,6 @@ package org.pacc.ByteObj.Format.Object;
 
 import org.pacc.ByteObj.Exception.IllegalCSVException;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

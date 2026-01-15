@@ -2,41 +2,39 @@ package org.pacc.ByteObj;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.pacc.ByteObj.Exception.InvalidFormatException;
+
+import java.util.Arrays;
 
 /**
  * Abstract base class for handling serialization and deserialization between objects and byte arrays.
  *
- * <p><b>Important Implementation Specification:</b>
- * All subclasses inheriting from {@link BasicByteObject} must implement the {@code ByteObject(byte[])} constructor
- * to enable the creation of object instances from byte array data.
- *
  * @param <ObjectType> The type of object to be serialized/deserialized
+ * @implSpec {@link #serialize(Object)} {@link #deserialize(byte[])}
  */
-public abstract class BasicByteObject<ObjectType>
+public abstract class BaseByteObj<ObjectType>
 {
     @Getter
     @Setter
     private byte[] bytes = new byte[0];
 
-    public BasicByteObject(ObjectType object)
+    public BaseByteObj(ObjectType object)
     {
         this.setObject(object);
     }
 
-    public BasicByteObject(byte[] objectBytesData)
+    public BaseByteObj(byte[] objectBytesData)
     {
         this.bytes = objectBytesData;
     }
 
-    public BasicByteObject(byte[] objectBytesData, boolean ignoreThis)
+    public BaseByteObj(byte[] objectBytesData, boolean ignoreThis)
     {
         this.bytes = objectBytesData;
     }
 
     public abstract byte[] serialize(ObjectType object);
 
-    public abstract ObjectType deserialize(byte[] objectBytesData) throws InvalidFormatException;
+    public abstract ObjectType deserialize(byte[] objectBytesData);
 
     public ObjectType getObject()
     {
@@ -46,5 +44,17 @@ public abstract class BasicByteObject<ObjectType>
     public void setObject(ObjectType object)
     {
         this.setBytes(serialize(object));
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return obj instanceof BaseByteObj<?> && Arrays.equals(this.bytes, ((BaseByteObj<?>) obj).bytes);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return this.getObject().hashCode();
     }
 }

@@ -1,10 +1,10 @@
 package org.pacc.ByteObj.BasicData;
 
-import org.pacc.ByteObj.CacheByteObj;
+import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.InvalidFormatException;
 import org.pacc.ByteObj.Serializer.BasicDataSerializer;
 
-public class BBoolean extends CacheByteObj<Boolean>
+public class BBoolean extends DirectByteObj<Boolean>
 {
     public BBoolean(Boolean object)
     {
@@ -33,4 +33,6 @@ public class BBoolean extends CacheByteObj<Boolean>
             throw new InvalidFormatException(e, Boolean.class);
         }
     }
+
+
 }

@@ -7,6 +7,11 @@ public class BytesConstructorMissingException extends RuntimeException
         super(clazz.getName() + " is missing constructor <init>([B)V and cannot be created using bytes data");
     }
 
+    public BytesConstructorMissingException(Class<?> keyClazz, Class<?> valueClazz)
+    {
+        super(keyClazz.getName() + " or " + valueClazz.getName() + " is missing constructor <init>([B)V and cannot be created using bytes data");
+    }
+
     public BytesConstructorMissingException(String message)
     {
         super(message);

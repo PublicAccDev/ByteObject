@@ -1,28 +1,14 @@
 package org.pacc.ByteObj.BasicData;
 
-import lombok.Setter;
-import org.pacc.ByteObj.CacheByteObj;
+import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.InvalidFormatException;
 import org.pacc.ByteObj.Serializer.BasicDataSerializer;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
-
-public class BCharArray extends CacheByteObj<char[]>
+public class BCharArray extends DirectByteObj<char[]>
 {
-    @Setter
-    private Charset charset;
-
     public BCharArray(char[] object)
     {
         super(object);
-    }
-
-    public BCharArray(char[] object, Charset charset)
-    {
-        super(object);
-        this.charset = charset;
     }
 
     public BCharArray(byte[] objectBytesData)
@@ -35,7 +21,7 @@ public class BCharArray extends CacheByteObj<char[]>
     {
         try
         {
-            return BasicDataSerializer.serialize(object, this.getCharset());
+            return BasicDataSerializer.serialize(object);
         } catch (Exception e)
         {
             throw new InvalidFormatException(e, char[].class);
@@ -45,11 +31,8 @@ public class BCharArray extends CacheByteObj<char[]>
     @Override
     public char[] deserialize(byte[] objectBytesData)
     {
-        return BasicDataSerializer.deserializeChars(objectBytesData, this.getCharset());
+        return BasicDataSerializer.deserializeChars(objectBytesData);
     }
 
-    private Charset getCharset()
-    {
-        return Optional.ofNullable(charset).orElse(StandardCharsets.UTF_8);
-    }
+
 }

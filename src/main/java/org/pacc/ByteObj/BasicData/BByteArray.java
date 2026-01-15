@@ -1,13 +1,8 @@
 package org.pacc.ByteObj.BasicData;
 
-import org.pacc.ByteObj.CacheByteObj;
-import org.pacc.ByteObj.Exception.InvalidFormatException;
-import org.pacc.ByteObj.Serializer.BasicDataSerializer;
-import org.pacc.ByteObj.Serializer.SerializableSerializer;
+import org.pacc.ByteObj.DirectByteObj;
 
-import java.io.Serializable;
-
-public class BByteArray extends CacheByteObj<byte[]>
+public class BByteArray extends DirectByteObj<byte[]>
 {
     public BByteArray(byte[] object)
     {
@@ -25,4 +20,6 @@ public class BByteArray extends CacheByteObj<byte[]>
     {
         return objectBytesData;
     }
+
+    
 }

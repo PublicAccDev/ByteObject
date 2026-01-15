@@ -1,13 +1,13 @@
 package org.pacc.ByteObj.Container;
 
-import org.pacc.ByteObj.BasicByteObject;
-import org.pacc.ByteObj.CacheByteObj;
+import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
+import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
 
 import java.lang.reflect.Constructor;
 
-public class BArray<ByteObj extends BasicByteObject<?>> extends CacheByteObj<ByteObj[]>
+public class BArray<ByteObj extends DirectByteObj<?>> extends FastByteObj<ByteObj[]>
 {
     private final Constructor<ByteObj> constructor;
     private final Class<ByteObj> clazz;
@@ -19,7 +19,7 @@ public class BArray<ByteObj extends BasicByteObject<?>> extends CacheByteObj<Byt
         this.clazz = (Class<ByteObj>) object.getClass().getComponentType();
         try
         {
-            constructor = clazz.getConstructor(byte[].class);
+            this.constructor = clazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(clazz);
@@ -32,7 +32,7 @@ public class BArray<ByteObj extends BasicByteObject<?>> extends CacheByteObj<Byt
         this.clazz = clazz;
         try
         {
-            constructor = clazz.getConstructor(byte[].class);
+            this.constructor = clazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(clazz);
@@ -45,7 +45,7 @@ public class BArray<ByteObj extends BasicByteObject<?>> extends CacheByteObj<Byt
         this.clazz = clazz;
         try
         {
-            constructor = clazz.getConstructor(byte[].class);
+            this.constructor = clazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(clazz);
@@ -61,7 +61,7 @@ public class BArray<ByteObj extends BasicByteObject<?>> extends CacheByteObj<Byt
     @Override
     public ByteObj[] deserialize(byte[] objectBytesData)
     {
-        return ContainerSerializer.deserializeArray(objectBytesData, clazz, constructor);
+        return ContainerSerializer.deserializeArray(objectBytesData, this.clazz, this.constructor);
     }
 
     public int length()

@@ -4,15 +4,11 @@ import org.pacc.ByteObj.Exception.InvalidFormatException;
 
 import java.io.*;
 
-public class SerializableSerializer
+public class UniversalSerializer
 {
     public static byte[] serialize(Object object)
     {
-        if(!(object instanceof Serializable))
-        {
-            throw new InvalidFormatException(object);
-        }
-        try(ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream())
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream())
         {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
             objectOutputStream.writeObject(object);
@@ -25,7 +21,7 @@ public class SerializableSerializer
 
     public static Object deserialize(byte[] objectBytesData) throws InvalidFormatException
     {
-        try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(objectBytesData))
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(objectBytesData))
         {
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
             return objectInputStream.readObject();

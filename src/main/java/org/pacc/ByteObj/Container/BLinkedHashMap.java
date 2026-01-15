@@ -1,8 +1,8 @@
 package org.pacc.ByteObj.Container;
 
-import org.pacc.ByteObj.BasicByteObject;
-import org.pacc.ByteObj.CacheByteObj;
+import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
+import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
 
 import java.lang.reflect.Constructor;
@@ -15,7 +15,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class BLinkedHashMap<Key extends BasicByteObject<?>, Value extends BasicByteObject<?>> extends CacheByteObj<LinkedHashMap<Key, Value>>
+public class BLinkedHashMap<Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> extends FastByteObj<LinkedHashMap<Key, Value>>
 {
 
     private final Constructor<Key> keyConstructor;
@@ -26,11 +26,11 @@ public class BLinkedHashMap<Key extends BasicByteObject<?>, Value extends BasicB
         super(map);
         try
         {
-            keyConstructor = keyClazz.getConstructor(byte[].class);
-            valueConstructor = valueClazz.getConstructor(byte[].class);
+            this.keyConstructor = keyClazz.getConstructor(byte[].class);
+            this.valueConstructor = valueClazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
-            throw new BytesConstructorMissingException(keyClazz.getName() + " or " + valueClazz.getName() + " is missing constructor <init>([B)V and cannot be created using bytes data");
+            throw new BytesConstructorMissingException(keyClazz, valueClazz);
         }
     }
 
@@ -39,11 +39,11 @@ public class BLinkedHashMap<Key extends BasicByteObject<?>, Value extends BasicB
         super(new LinkedHashMap<>());
         try
         {
-            keyConstructor = keyClazz.getConstructor(byte[].class);
-            valueConstructor = valueClazz.getConstructor(byte[].class);
+            this.keyConstructor = keyClazz.getConstructor(byte[].class);
+            this.valueConstructor = valueClazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
-            throw new BytesConstructorMissingException(keyClazz.getName() + " or " + valueClazz.getName() + " is missing constructor <init>([B)V and cannot be created using bytes data");
+            throw new BytesConstructorMissingException(keyClazz, valueClazz);
         }
     }
 
@@ -56,10 +56,9 @@ public class BLinkedHashMap<Key extends BasicByteObject<?>, Value extends BasicB
     @Override
     public LinkedHashMap<Key, Value> deserialize(byte[] objectBytesData)
     {
-        return ContainerSerializer.deserializeLinkedHashMap(objectBytesData, keyConstructor, valueConstructor);
+        return ContainerSerializer.deserializeLinkedHashMap(objectBytesData, this.keyConstructor, this.valueConstructor);
     }
 
-    // Map-like API
     public Value put(Key key, Value value)
     {
         LinkedHashMap<Key, Value> map = getObject();

@@ -1,10 +1,10 @@
 package org.pacc.ByteObj.BasicData;
 
-import org.pacc.ByteObj.CacheByteObj;
+import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.InvalidFormatException;
 import org.pacc.ByteObj.Serializer.BasicDataSerializer;
 
-public class BDouble extends CacheByteObj<Double>
+public class BDouble extends DirectByteObj<Double>
 {
     public BDouble(Double object)
     {
@@ -34,4 +34,5 @@ public class BDouble extends CacheByteObj<Double>
         }
     }
 
+    
 }

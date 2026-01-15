@@ -1,12 +1,11 @@
 package org.pacc.ByteObj.Container;
 
-import org.pacc.ByteObj.BasicByteObject;
-import org.pacc.ByteObj.CacheByteObj;
+import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
+import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.function.Consumer;
@@ -14,7 +13,7 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class BHashSet<ByteObj extends BasicByteObject<?>> extends CacheByteObj<HashSet<ByteObj>>
+public class BHashSet<ByteObj extends DirectByteObj<?>> extends FastByteObj<HashSet<ByteObj>>
 {
     private final Constructor<ByteObj> constructor;
 
@@ -24,7 +23,7 @@ public class BHashSet<ByteObj extends BasicByteObject<?>> extends CacheByteObj<H
         super(object);
         try
         {
-            constructor = (Constructor<ByteObj>) object.getClass().getComponentType().getConstructor(byte[].class);
+            this.constructor = (Constructor<ByteObj>) object.getClass().getComponentType().getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(object.getClass().getComponentType());
@@ -36,7 +35,7 @@ public class BHashSet<ByteObj extends BasicByteObject<?>> extends CacheByteObj<H
         super(object);
         try
         {
-            constructor = clazz.getConstructor(byte[].class);
+            this.constructor = clazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(clazz);
@@ -48,7 +47,7 @@ public class BHashSet<ByteObj extends BasicByteObject<?>> extends CacheByteObj<H
         super(new byte[0]);
         try
         {
-            constructor = clazz.getConstructor(byte[].class);
+            this.constructor = clazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(clazz);
@@ -64,7 +63,7 @@ public class BHashSet<ByteObj extends BasicByteObject<?>> extends CacheByteObj<H
     @Override
     public HashSet<ByteObj> deserialize(byte[] objectBytesData)
     {
-        return ContainerSerializer.deserializeHashSet(objectBytesData, constructor);
+        return ContainerSerializer.deserializeHashSet(objectBytesData, this.constructor);
     }
 
     public boolean add(ByteObj e)
