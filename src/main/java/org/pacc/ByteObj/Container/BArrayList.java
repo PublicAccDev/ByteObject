@@ -19,6 +19,19 @@ public class BArrayList<ByteObj extends BasicByteObject<?>> extends CacheByteObj
 {
     private final Constructor<ByteObj> constructor;
 
+    @SuppressWarnings("unchecked")
+    public BArrayList(ArrayList<ByteObj> object)
+    {
+        super(object);
+        try
+        {
+            constructor = (Constructor<ByteObj>) object.getClass().getComponentType().getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(object.getClass().getComponentType());
+        }
+    }
+
     public BArrayList(ArrayList<ByteObj> object, Class<ByteObj> clazz)
     {
         super(object);

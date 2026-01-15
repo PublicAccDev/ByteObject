@@ -4,18 +4,25 @@ import lombok.Setter;
 import org.pacc.ByteObj.CacheByteObj;
 import org.pacc.ByteObj.Exception.InvalidFormatException;
 import org.pacc.ByteObj.Serializer.BasicDataSerializer;
-import org.pacc.ByteObj.Serializer.SerializableSerializer;
 
-import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-public class BCharArray extends CacheByteObj<Character[]> implements Serializable
+public class BCharArray extends CacheByteObj<char[]>
 {
-    public BCharArray(Character[] object)
+    @Setter
+    private Charset charset;
+
+    public BCharArray(char[] object)
     {
         super(object);
+    }
+
+    public BCharArray(char[] object, Charset charset)
+    {
+        super(object);
+        this.charset = charset;
     }
 
     public BCharArray(byte[] objectBytesData)
@@ -24,20 +31,25 @@ public class BCharArray extends CacheByteObj<Character[]> implements Serializabl
     }
 
     @Override
-    public byte[] serialize(Character[] object)
-    {
-        return SerializableSerializer.serialize(object);
-    }
-
-    @Override
-    public Character[] deserialize(byte[] objectBytesData) throws InvalidFormatException
+    public byte[] serialize(char[] object) throws InvalidFormatException
     {
         try
         {
-            return (Character[]) SerializableSerializer.deserialize(objectBytesData);
-        } catch (ClassCastException e)
+            return BasicDataSerializer.serialize(object, this.getCharset());
+        } catch (Exception e)
         {
-            throw new InvalidFormatException(e, Character[].class);
+            throw new InvalidFormatException(e, char[].class);
         }
+    }
+
+    @Override
+    public char[] deserialize(byte[] objectBytesData)
+    {
+        return BasicDataSerializer.deserializeChars(objectBytesData, this.getCharset());
+    }
+
+    private Charset getCharset()
+    {
+        return Optional.ofNullable(charset).orElse(StandardCharsets.UTF_8);
     }
 }

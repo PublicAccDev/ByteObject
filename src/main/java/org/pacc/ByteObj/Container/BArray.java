@@ -12,6 +12,20 @@ public class BArray<ByteObj extends BasicByteObject<?>> extends CacheByteObj<Byt
     private final Constructor<ByteObj> constructor;
     private final Class<ByteObj> clazz;
 
+    @SuppressWarnings("unchecked")
+    public BArray(ByteObj[] object)
+    {
+        super(object);
+        this.clazz = (Class<ByteObj>) object.getClass().getComponentType();
+        try
+        {
+            constructor = clazz.getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(clazz);
+        }
+    }
+
     public BArray(ByteObj[] object, Class<ByteObj> clazz)
     {
         super(object);

@@ -3,11 +3,8 @@ package org.pacc.ByteObj.BasicData;
 import org.pacc.ByteObj.CacheByteObj;
 import org.pacc.ByteObj.Exception.InvalidFormatException;
 import org.pacc.ByteObj.Serializer.BasicDataSerializer;
-import org.pacc.ByteObj.Serializer.SerializableSerializer;
 
-import java.io.Serializable;
-
-public class BInteger extends CacheByteObj<Integer> implements Serializable
+public class BInteger extends CacheByteObj<Integer>
 {
     public BInteger(Integer object)
     {
@@ -22,16 +19,16 @@ public class BInteger extends CacheByteObj<Integer> implements Serializable
     @Override
     public byte[] serialize(Integer object)
     {
-        return SerializableSerializer.serialize(object);
+        return BasicDataSerializer.serialize(object);
     }
 
     @Override
-    public Integer deserialize(byte[] objectBytesData)
+    public Integer deserialize(byte[] objectBytesData) throws InvalidFormatException
     {
         try
         {
-            return (Integer) SerializableSerializer.deserialize(objectBytesData);
-        } catch (ClassCastException e)
+            return BasicDataSerializer.deserializeInteger(this.getBytes());
+        } catch (Exception e)
         {
             throw new InvalidFormatException(e, Integer.class);
         }

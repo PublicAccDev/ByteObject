@@ -6,6 +6,7 @@ import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.function.Consumer;
@@ -16,6 +17,19 @@ import java.util.stream.Stream;
 public class BHashSet<ByteObj extends BasicByteObject<?>> extends CacheByteObj<HashSet<ByteObj>>
 {
     private final Constructor<ByteObj> constructor;
+
+    @SuppressWarnings("unchecked")
+    public BHashSet(HashSet<ByteObj> object)
+    {
+        super(object);
+        try
+        {
+            constructor = (Constructor<ByteObj>) object.getClass().getComponentType().getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(object.getClass().getComponentType());
+        }
+    }
 
     public BHashSet(HashSet<ByteObj> object, Class<ByteObj> clazz)
     {

@@ -3,11 +3,8 @@ package org.pacc.ByteObj.BasicData;
 import org.pacc.ByteObj.CacheByteObj;
 import org.pacc.ByteObj.Exception.InvalidFormatException;
 import org.pacc.ByteObj.Serializer.BasicDataSerializer;
-import org.pacc.ByteObj.Serializer.SerializableSerializer;
 
-import java.io.Serializable;
-
-public class BFloat extends CacheByteObj<Float> implements Serializable
+public class BFloat extends CacheByteObj<Float>
 {
     public BFloat(Float object)
     {
@@ -22,7 +19,7 @@ public class BFloat extends CacheByteObj<Float> implements Serializable
     @Override
     public byte[] serialize(Float object)
     {
-        return SerializableSerializer.serialize(object);
+        return BasicDataSerializer.serialize(object);
     }
 
     @Override
@@ -30,8 +27,8 @@ public class BFloat extends CacheByteObj<Float> implements Serializable
     {
         try
         {
-            return (Float) SerializableSerializer.deserialize(objectBytesData);
-        } catch (ClassCastException e)
+            return BasicDataSerializer.deserializeFloat(objectBytesData);
+        } catch (Exception e)
         {
             throw new InvalidFormatException(e, Float.class);
         }

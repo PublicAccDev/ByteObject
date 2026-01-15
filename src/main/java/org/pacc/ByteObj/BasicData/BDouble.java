@@ -3,11 +3,8 @@ package org.pacc.ByteObj.BasicData;
 import org.pacc.ByteObj.CacheByteObj;
 import org.pacc.ByteObj.Exception.InvalidFormatException;
 import org.pacc.ByteObj.Serializer.BasicDataSerializer;
-import org.pacc.ByteObj.Serializer.SerializableSerializer;
 
-import java.io.Serializable;
-
-public class BDouble extends CacheByteObj<Double> implements Serializable
+public class BDouble extends CacheByteObj<Double>
 {
     public BDouble(Double object)
     {
@@ -22,7 +19,7 @@ public class BDouble extends CacheByteObj<Double> implements Serializable
     @Override
     public byte[] serialize(Double object)
     {
-        return SerializableSerializer.serialize(object);
+        return BasicDataSerializer.serialize(object);
     }
 
     @Override
@@ -30,8 +27,8 @@ public class BDouble extends CacheByteObj<Double> implements Serializable
     {
         try
         {
-            return (Double) SerializableSerializer.deserialize(objectBytesData);
-        } catch (ClassCastException e)
+            return BasicDataSerializer.deserializeDouble(this.getBytes());
+        } catch (Exception e)
         {
             throw new InvalidFormatException(e, Double.class);
         }

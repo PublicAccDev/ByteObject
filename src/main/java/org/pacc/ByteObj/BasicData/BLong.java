@@ -3,11 +3,8 @@ package org.pacc.ByteObj.BasicData;
 import org.pacc.ByteObj.CacheByteObj;
 import org.pacc.ByteObj.Exception.InvalidFormatException;
 import org.pacc.ByteObj.Serializer.BasicDataSerializer;
-import org.pacc.ByteObj.Serializer.SerializableSerializer;
 
-import java.io.Serializable;
-
-public class BLong extends CacheByteObj<Long> implements Serializable
+public class BLong extends CacheByteObj<Long>
 {
     public BLong(Long object)
     {
@@ -22,16 +19,16 @@ public class BLong extends CacheByteObj<Long> implements Serializable
     @Override
     public byte[] serialize(Long object)
     {
-        return SerializableSerializer.serialize(object);
+        return BasicDataSerializer.serialize(object);
     }
 
     @Override
-    public Long deserialize(byte[] objectBytesData)
+    public Long deserialize(byte[] objectBytesData) throws InvalidFormatException
     {
         try
         {
-            return (Long) SerializableSerializer.deserialize(objectBytesData);
-        } catch (ClassCastException e)
+            return BasicDataSerializer.deserializeLong(this.getBytes());
+        } catch (Exception e)
         {
             throw new InvalidFormatException(e, Long.class);
         }

@@ -1,5 +1,6 @@
 package org.pacc.ByteObj;
 
+import org.pacc.ByteObj.BasicData.BBoolean;
 import org.pacc.ByteObj.BasicData.BString;
 import org.pacc.ByteObj.Format.Object.CSVObj;
 import org.pacc.ByteObj.Format.Object.Json.*;
@@ -74,6 +75,14 @@ public class Test
     private static void testMethod5()
     {
         long s = System.currentTimeMillis();
+
+        for(int i = 0; i < 1000000; i++)
+        {
+            Boolean b = false;
+            Boolean a = b;
+        }
+
+        System.out.println(Arrays.toString(SerializableSerializer.serialize(false)));
 
         long e = System.currentTimeMillis();
         System.out.println("Time: " + (e-s) + " ms");
