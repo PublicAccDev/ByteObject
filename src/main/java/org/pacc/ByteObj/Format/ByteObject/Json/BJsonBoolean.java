@@ -2,6 +2,7 @@ package org.pacc.ByteObj.Format.ByteObject.Json;
 
 import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Format.Object.Json.Value.JsonBoolean;
+import org.pacc.ByteObj.Serializer.FormatObjSerializer;
 
 public class BJsonBoolean extends DirectByteObj<JsonBoolean>
 {
@@ -18,12 +19,12 @@ public class BJsonBoolean extends DirectByteObj<JsonBoolean>
     @Override
     public byte[] serialize(JsonBoolean object)
     {
-        return new byte[0];
+        return FormatObjSerializer.serialize(object);
     }
 
     @Override
     public JsonBoolean deserialize(byte[] objectBytesData)
     {
-        return null;
+        return FormatObjSerializer.deserializeJsonBoolean(objectBytesData);
     }
 }

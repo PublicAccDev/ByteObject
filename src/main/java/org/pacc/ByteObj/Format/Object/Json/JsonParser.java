@@ -76,7 +76,7 @@ public class JsonParser
         }
     }
 
-    private static String unescapeJsonString(String str)
+    public static String unescapeJsonString(String str)
     {
         StringBuilder sb = new StringBuilder();
         boolean escape = false;
@@ -151,7 +151,7 @@ public class JsonParser
         return sb.toString();
     }
 
-    private static JsonObj parseObject(String json)
+    public static JsonObj parseObject(String json)
     {
         try
         {
@@ -242,7 +242,7 @@ public class JsonParser
         }
     }
 
-    private static JsonProperty parseProperty(String property)
+    public static JsonProperty parseProperty(String property)
     {
         try
         {
@@ -269,7 +269,7 @@ public class JsonParser
         }
     }
 
-    private static int findUnescapedColon(String str)
+    public static int findUnescapedColon(String str)
     {
         boolean escaped = false;
         boolean inString = false;
@@ -308,7 +308,7 @@ public class JsonParser
         return -1;
     }
 
-    private static JsonArray parseArray(String json)
+    public static JsonArray parseArray(String json)
     {
         try
         {

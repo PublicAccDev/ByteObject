@@ -1,6 +1,7 @@
 package org.pacc.ByteObj.Serializer;
 
 import org.pacc.ByteObj.Format.Object.CSVObj;
+import org.pacc.ByteObj.Format.Object.Json.JsonParser;
 import org.pacc.ByteObj.Format.Object.Json.Value.*;
 
 import java.nio.ByteBuffer;
@@ -8,80 +9,34 @@ import java.nio.charset.Charset;
 
 public class FormatObjSerializer
 {
-    public static byte[] serialize(CSVObj object, Charset charset)
+    public static byte[] serialize(CSVObj object)
     {
-        return object.toCSVString().getBytes(charset);
+        return object.toCSVString().getBytes();
     }
 
-    public static CSVObj deserializeCSValues(byte[] bytes, Charset charset)
+    public static CSVObj deserializeCSValues(byte[] bytes)
     {
-        return CSVObj.fromCSVString(new String(bytes, charset));
+        return CSVObj.fromCSVString(new String(bytes));
     }
 
     public static byte[] serialize(JsonProperty property)
     {
-        byte[] name = BasicDataSerializer.serialize(property.getName());
-        int nameLength = name.length;
-        byte[] reserved = new byte[0];
-        switch (property.getValue())
-        {
-            case JsonArray obj ->
-            {
+        return property.toString().getBytes();
+    }
 
-            }
-            case JsonBoolean obj ->
-            {
-                reserved = serialize(obj);
-
-            }
-            case JsonDouble obj ->
-            {
-                reserved = serialize(obj);
-            }
-            case JsonFloat obj ->
-            {
-                reserved = serialize(obj);
-            }
-            case JsonInteger obj ->
-            {
-                reserved = serialize(obj);
-            }
-            case JsonLong obj ->
-            {
-                reserved = serialize(obj);
-            }
-            case JsonNull obj ->
-            {
-                reserved = serialize(obj);
-            }
-            case JsonObj obj ->
-            {
-
-            }
-            case JsonString obj ->
-            {
-                reserved = serialize(obj);
-            }
-        }
-        ByteBuffer buffer = ByteBuffer.allocate(
-                4
-                + nameLength
-                + reserved.length
-        );
-        buffer.putInt(nameLength);
-        buffer.put(name);
-        buffer.put(reserved);
-        return buffer.array();
+    public static JsonProperty deserializeJsonProperty(byte[] bytes)
+    {
+        return JsonParser.parseProperty(new String(bytes));
     }
 
     public static byte[] serialize(JsonArray object)
     {
-        return null;
+        return object.toString().getBytes();
     }
 
     public static JsonArray deserializeJsonArray(byte[] bytes)
     {
-        return null;
+        return JsonParser.parseArray(new String(bytes));
     }
 
     public static byte[] serialize(JsonBoolean object)
@@ -144,33 +99,25 @@ public class FormatObjSerializer
         return new JsonNull();
     }
 
-    public static byte[] serialize(JsonObj object)
-    {
-        return null;
-    }
-
-    public static JsonObj deserializeJsonObj(byte[] bytes)
-    {
-        return null;
-    }
-
     public static byte[] serialize(JsonString object)
     {
-        byte[] str = BasicDataSerializer.serialize(object.getValue());
-        int length = str.length;
-        ByteBuffer buffer = ByteBuffer.allocate(
-                4
-                + length
-        );
-        buffer.putInt(length);
-        buffer.put(str);
-        return buffer.array();
+        return BasicDataSerializer.serialize(object.getValue());
     }
 
     public static JsonString deserializeJsonString(byte[] bytes)
     {
-        byte[] slice = new byte[bytes.length - 4];
-        System.arraycopy(bytes, 4, slice, 0, bytes.length - 4);
-        return new JsonString(BasicDataSerializer.deserializeString(slice));
+            return new JsonString(BasicDataSerializer.deserializeString(bytes));
     }
+
+    public static byte[] serialize(JsonObj object)
+    {
+        return object.toString().getBytes();
+    }
+
+    public static JsonObj deserializeJsonObj(byte[] bytes)
+    {
+        return JsonObj.fromString(new String(bytes));
+    }
+
+
 }

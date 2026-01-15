@@ -11,18 +11,9 @@ import java.util.Optional;
 
 public class BCSVObj extends DirectByteObj<CSVObj>
 {
-    @Setter
-    private Charset charset;
-
     public BCSVObj(CSVObj object)
     {
         super(object);
-    }
-
-    public BCSVObj(CSVObj object, Charset charset)
-    {
-        super(object);
-        this.charset = charset;
     }
 
     public BCSVObj(byte[] objectBytesData)
@@ -33,17 +24,12 @@ public class BCSVObj extends DirectByteObj<CSVObj>
     @Override
     public byte[] serialize(CSVObj object)
     {
-        return FormatObjSerializer.serialize(object, this.getCharset());
+        return FormatObjSerializer.serialize(object);
     }
 
     @Override
     public CSVObj deserialize(byte[] objectBytesData)
     {
-        return FormatObjSerializer.deserializeCSValues(objectBytesData, this.getCharset());
-    }
-
-    private Charset getCharset()
-    {
-        return Optional.ofNullable(this.charset).orElse(StandardCharsets.UTF_8);
+        return FormatObjSerializer.deserializeCSValues(objectBytesData);
     }
 }

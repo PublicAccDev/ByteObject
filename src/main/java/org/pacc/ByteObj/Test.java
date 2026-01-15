@@ -69,14 +69,7 @@ public class Test
 
     private static void testMethod4()
     {
-        ArrayDeque<BInteger> a = new ArrayDeque<>();
-        a.add(new BInteger(1));
-        a.add(new BInteger(2));
-        a.add(new BInteger(3));
 
-        BArrayDeque<BInteger> b = new BArrayDeque<>(a);
-
-        System.out.println(b);
     }
 
     private static void testMethod5()

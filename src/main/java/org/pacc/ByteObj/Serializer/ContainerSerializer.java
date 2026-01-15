@@ -98,7 +98,7 @@ public class ContainerSerializer
         return new ArrayDeque<>(collection);
     }
 
-    private static <ByteObj extends BaseByteObj<?>> byte[] serializeIterable(Iterable<ByteObj> iterable)
+    public static <ByteObj extends BaseByteObj<?>> byte[] serializeIterable(Iterable<ByteObj> iterable)
     {
         int totalLength = 0;
         for (ByteObj obj : iterable)
@@ -115,7 +115,7 @@ public class ContainerSerializer
         return buffer.array();
     }
 
-    private static <ByteObj extends DirectByteObj<?>> Collection<ByteObj> deserializeCollection(byte[] data, Constructor<ByteObj> constructor)
+    public static <ByteObj extends DirectByteObj<?>> Collection<ByteObj> deserializeCollection(byte[] data, Constructor<ByteObj> constructor)
     {
         try
         {
@@ -137,7 +137,7 @@ public class ContainerSerializer
         }
     }
 
-    private static <Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> Map<Key, Value> deserializeMap(byte[] data, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
+    public static <Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> Map<Key, Value> deserializeMap(byte[] data, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
     {
         try
         {
