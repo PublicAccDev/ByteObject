@@ -6,21 +6,25 @@ import org.pacc.ByteObj.Serializer.FormatObjSerializer;
 
 public class BJsonLong extends DirectByteObj<JsonLong>
 {
-    public BJsonLong(JsonLong object) {
+    public BJsonLong(JsonLong object)
+    {
         super(object);
     }
 
-    public BJsonLong(byte[] objectBytesData) {
+    public BJsonLong(byte[] objectBytesData)
+    {
         super(objectBytesData);
     }
 
     @Override
-    public byte[] serialize(JsonLong object) {
+    public byte[] serialize(JsonLong object)
+    {
         return FormatObjSerializer.serialize(object);
     }
 
     @Override
-    public JsonLong deserialize(byte[] objectBytesData) {
+    public JsonLong deserialize(byte[] objectBytesData)
+    {
         return FormatObjSerializer.deserializeJsonLong(objectBytesData);
     }
 }

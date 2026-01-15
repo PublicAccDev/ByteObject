@@ -6,21 +6,25 @@ import org.pacc.ByteObj.Serializer.FormatObjSerializer;
 
 public class BJsonFloat extends DirectByteObj<JsonFloat>
 {
-    public BJsonFloat(JsonFloat object) {
+    public BJsonFloat(JsonFloat object)
+    {
         super(object);
     }
 
-    public BJsonFloat(byte[] objectBytesData) {
+    public BJsonFloat(byte[] objectBytesData)
+    {
         super(objectBytesData);
     }
 
     @Override
-    public byte[] serialize(JsonFloat object) {
+    public byte[] serialize(JsonFloat object)
+    {
         return FormatObjSerializer.serialize(object);
     }
 
     @Override
-    public JsonFloat deserialize(byte[] objectBytesData) {
+    public JsonFloat deserialize(byte[] objectBytesData)
+    {
         return FormatObjSerializer.deserializeJsonFloat(objectBytesData);
     }
 }

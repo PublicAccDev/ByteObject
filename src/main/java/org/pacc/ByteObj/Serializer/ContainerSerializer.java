@@ -38,9 +38,19 @@ public class ContainerSerializer
         return serializeIterable(list);
     }
 
+    public static <ByteObj extends BaseByteObj<?>> byte[] serialize(LinkedList<ByteObj> list)
+    {
+        return serializeIterable(list);
+    }
+
     public static <ByteObj extends DirectByteObj<?>> ArrayList<ByteObj> deserializeArrayList(byte[] data, Constructor<ByteObj> constructor)
     {
         return new ArrayList<>(deserializeCollection(data, constructor));
+    }
+
+    public static <ByteObj extends DirectByteObj<?>> LinkedList<ByteObj> deserializeLinkedList(byte[] data, Constructor<ByteObj> constructor)
+    {
+        return new LinkedList<>(deserializeCollection(data, constructor));
     }
 
     public static <ByteObj extends BaseByteObj<?>> byte[] serialize(Set<ByteObj> set)
@@ -51,11 +61,6 @@ public class ContainerSerializer
     public static <ByteObj extends DirectByteObj<?>> HashSet<ByteObj> deserializeHashSet(byte[] data, Constructor<ByteObj> constructor)
     {
         return new HashSet<>(deserializeCollection(data, constructor));
-    }
-
-    public static <ByteObj extends BaseByteObj<?>> byte[] serialize(LinkedHashSet<ByteObj> set)
-    {
-        return serializeIterable(set);
     }
 
     public static <ByteObj extends DirectByteObj<?>> LinkedHashSet<ByteObj> deserializeLinkedHashSet(byte[] data, Constructor<ByteObj> constructor)
@@ -89,13 +94,21 @@ public class ContainerSerializer
         return new LinkedHashMap<>(deserializeMap(data, keyConstructor, valueConstructor));
     }
 
-    public static <ByteObj extends BaseByteObj<?>> byte[] serialize(ArrayDeque<ByteObj> deque) {
+    public static <ByteObj extends BaseByteObj<?>> byte[] serialize(Queue<ByteObj> deque)
+    {
         return serializeIterable(deque);
     }
 
-    public static <ByteObj extends DirectByteObj<?>> ArrayDeque<ByteObj> deserializeArrayDeque(byte[] data, Constructor<ByteObj> constructor) {
+    public static <ByteObj extends DirectByteObj<?>> ArrayDeque<ByteObj> deserializeArrayDeque(byte[] data, Constructor<ByteObj> constructor)
+    {
         Collection<ByteObj> collection = deserializeCollection(data, constructor);
         return new ArrayDeque<>(collection);
+    }
+
+    public static <ByteObj extends DirectByteObj<?>> PriorityQueue<ByteObj> deserializePriorityQueue(byte[] data, Constructor<ByteObj> constructor)
+    {
+        Collection<ByteObj> collection = deserializeCollection(data, constructor);
+        return new PriorityQueue<>(collection);
     }
 
     public static <ByteObj extends BaseByteObj<?>> byte[] serializeIterable(Iterable<ByteObj> iterable)

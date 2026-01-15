@@ -34,6 +34,58 @@ public class BLinkedHashMap<Key extends DirectByteObj<?>, Value extends DirectBy
         }
     }
 
+    public BLinkedHashMap(Map<Key, Value> map, Class<Key> keyClazz, Class<Value> valueClazz)
+    {
+        super(new LinkedHashMap<>(map));
+        try
+        {
+            this.keyConstructor = keyClazz.getConstructor(byte[].class);
+            this.valueConstructor = valueClazz.getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(keyClazz, valueClazz);
+        }
+    }
+
+    public BLinkedHashMap(int initialCapacity, Class<Key> keyClazz, Class<Value> valueClazz)
+    {
+        super(new LinkedHashMap<>(initialCapacity));
+        try
+        {
+            this.keyConstructor = keyClazz.getConstructor(byte[].class);
+            this.valueConstructor = valueClazz.getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(keyClazz, valueClazz);
+        }
+    }
+
+    public BLinkedHashMap(int initialCapacity, float loadFactor, Class<Key> keyClazz, Class<Value> valueClazz)
+    {
+        super(new LinkedHashMap<>(initialCapacity, loadFactor));
+        try
+        {
+            this.keyConstructor = keyClazz.getConstructor(byte[].class);
+            this.valueConstructor = valueClazz.getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(keyClazz, valueClazz);
+        }
+    }
+
+    public BLinkedHashMap(int initialCapacity, float loadFactor, boolean accessOrder, Class<Key> keyClazz, Class<Value> valueClazz)
+    {
+        super(new LinkedHashMap<>(initialCapacity, loadFactor, accessOrder));
+        try
+        {
+            this.keyConstructor = keyClazz.getConstructor(byte[].class);
+            this.valueConstructor = valueClazz.getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(keyClazz, valueClazz);
+        }
+    }
+
     public BLinkedHashMap(Class<Key> keyClazz, Class<Value> valueClazz)
     {
         super(new LinkedHashMap<>());

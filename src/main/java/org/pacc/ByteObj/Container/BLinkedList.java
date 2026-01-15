@@ -6,9 +6,9 @@ import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
@@ -16,11 +16,11 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<ArrayList<ByteObj>>
+public class BLinkedList<ByteObj extends DirectByteObj<?>> extends FastByteObj<LinkedList<ByteObj>>
 {
     private final Constructor<ByteObj> constructor;
 
-    public BArrayList(ArrayList<ByteObj> object, Class<ByteObj> clazz)
+    public BLinkedList(LinkedList<ByteObj> object, Class<ByteObj> clazz)
     {
         super(object);
         try
@@ -32,9 +32,9 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
         }
     }
 
-    public BArrayList(Collection<ByteObj> object, Class<ByteObj> clazz)
+    public BLinkedList(Collection<ByteObj> object, Class<ByteObj> clazz)
     {
-        super(new ArrayList<>(object));
+        super(new LinkedList<>(object));
         try
         {
             this.constructor = clazz.getConstructor(byte[].class);
@@ -44,21 +44,9 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
         }
     }
 
-    public BArrayList(int initialCapacity, Class<ByteObj> clazz)
+    public BLinkedList(Class<ByteObj> clazz)
     {
-        super(new ArrayList<>(initialCapacity));
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
-    }
-
-    public BArrayList(Class<ByteObj> clazz)
-    {
-        super(new ArrayList<>());
+        super(new LinkedList<>());
         try
         {
             this.constructor = clazz.getConstructor(byte[].class);
@@ -69,15 +57,15 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
     }
 
     @Override
-    public byte[] serialize(ArrayList<ByteObj> object)
+    public byte[] serialize(LinkedList<ByteObj> object)
     {
         return ContainerSerializer.serialize(object);
     }
 
     @Override
-    public ArrayList<ByteObj> deserialize(byte[] objectBytesData)
+    public LinkedList<ByteObj> deserialize(byte[] objectBytesData)
     {
-        return ContainerSerializer.deserializeArrayList(objectBytesData, this.constructor);
+        return ContainerSerializer.deserializeLinkedList(objectBytesData, this.constructor);
     }
 
     public ByteObj get(int index)
@@ -97,7 +85,7 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
 
     public ByteObj set(int index, ByteObj element)
     {
-        ArrayList<ByteObj> list = this.getObject();
+        LinkedList<ByteObj> list = this.getObject();
         ByteObj r = list.set(index, element);
         this.setObject(list);
         return r;
@@ -105,7 +93,7 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
 
     public boolean add(ByteObj e)
     {
-        ArrayList<ByteObj> list = this.getObject();
+        LinkedList<ByteObj> list = this.getObject();
         boolean r = list.add(e);
         this.setObject(list);
         return r;
@@ -113,14 +101,14 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
 
     public void add(int index, ByteObj element)
     {
-        ArrayList<ByteObj> list = this.getObject();
+        LinkedList<ByteObj> list = this.getObject();
         list.add(index, element);
         this.setObject(list);
     }
 
     public boolean addAll(Collection<? extends ByteObj> c)
     {
-        ArrayList<ByteObj> list = this.getObject();
+        LinkedList<ByteObj> list = this.getObject();
         boolean r = list.addAll(c);
         this.setObject(list);
         return r;
@@ -128,7 +116,7 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
 
     public boolean addAll(int index, Collection<? extends ByteObj> c)
     {
-        ArrayList<ByteObj> list = this.getObject();
+        LinkedList<ByteObj> list = this.getObject();
         boolean r = list.addAll(index, c);
         this.setObject(list);
         return r;
@@ -136,7 +124,7 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
 
     public ByteObj remove(int index)
     {
-        ArrayList<ByteObj> list = this.getObject();
+        LinkedList<ByteObj> list = this.getObject();
         ByteObj r = list.remove(index);
         this.setObject(list);
         return r;
@@ -144,7 +132,7 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
 
     public boolean remove(ByteObj o)
     {
-        ArrayList<ByteObj> list = this.getObject();
+        LinkedList<ByteObj> list = this.getObject();
         boolean r = list.remove(o);
         this.setObject(list);
         return r;
@@ -152,7 +140,7 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
 
     public boolean removeAll(Collection<ByteObj> c)
     {
-        ArrayList<ByteObj> list = this.getObject();
+        LinkedList<ByteObj> list = this.getObject();
         boolean r = list.removeAll(c);
         this.setObject(list);
         return r;
@@ -160,24 +148,8 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
 
     public boolean removeIf(Predicate<? super ByteObj> filter)
     {
-        ArrayList<ByteObj> list = this.getObject();
+        LinkedList<ByteObj> list = this.getObject();
         boolean r = list.removeIf(filter);
-        this.setObject(list);
-        return r;
-    }
-
-    public ByteObj removeFirst()
-    {
-        ArrayList<ByteObj> list = this.getObject();
-        ByteObj r = list.removeFirst();
-        this.setObject(list);
-        return r;
-    }
-
-    public ByteObj removeLast()
-    {
-        ArrayList<ByteObj> list = this.getObject();
-        ByteObj r = list.removeLast();
         this.setObject(list);
         return r;
     }
@@ -209,7 +181,7 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
 
     public void replaceAll(UnaryOperator<ByteObj> operator)
     {
-        ArrayList<ByteObj> list = this.getObject();
+        LinkedList<ByteObj> list = this.getObject();
         list.replaceAll(operator);
         this.setObject(list);
     }
@@ -226,15 +198,15 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
 
     public boolean retainAll(Collection<ByteObj> c)
     {
-        ArrayList<ByteObj> list = this.getObject();
+        LinkedList<ByteObj> list = this.getObject();
         boolean r = list.retainAll(c);
         this.setObject(list);
         return r;
     }
 
-    public List<ByteObj> subList(int fromIndex, int toIndex)
+    public LinkedList<ByteObj> subLinkedList(int fromIndex, int toIndex)
     {
-        return new ArrayList<>(this.getObject().subList(fromIndex, toIndex));
+        return new LinkedList<>(this.getObject().subList(fromIndex, toIndex));
     }
 
     public Stream<ByteObj> stream()
@@ -254,7 +226,7 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
 
     public void clear()
     {
-        this.setObject(new ArrayList<>());
+        this.setObject(new LinkedList<>());
     }
 
     public boolean isEmpty()
@@ -269,7 +241,7 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
 
     public void sort(Comparator<? super ByteObj> c)
     {
-        ArrayList<ByteObj> list = this.getObject();
+        LinkedList<ByteObj> list = this.getObject();
         list.sort(c);
         this.setObject(list);
     }

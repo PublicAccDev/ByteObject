@@ -5,6 +5,7 @@ import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
 import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 
 public class BArray<ByteObj extends DirectByteObj<?>> extends FastByteObj<ByteObj[]>
@@ -26,9 +27,10 @@ public class BArray<ByteObj extends DirectByteObj<?>> extends FastByteObj<ByteOb
         }
     }
 
-    public BArray(ByteObj[] object, Class<ByteObj> clazz)
+    @SuppressWarnings("unchecked")
+    public BArray(Class<ByteObj> clazz)
     {
-        super(object);
+        super((ByteObj[]) Array.newInstance(clazz, 0));
         this.clazz = clazz;
         try
         {
@@ -39,9 +41,9 @@ public class BArray<ByteObj extends DirectByteObj<?>> extends FastByteObj<ByteOb
         }
     }
 
-    public BArray(Class<ByteObj> clazz)
+    public BArray(ByteObj[] object, Class<ByteObj> clazz)
     {
-        super(new byte[0]);
+        super(object);
         this.clazz = clazz;
         try
         {

@@ -60,7 +60,7 @@ public class CSVObj
 
         if (!values.isEmpty())
         {
-            this.columnCount = values.get(0).size();
+            this.columnCount = values.getFirst().size();
         }
         else
         {
@@ -89,7 +89,7 @@ public class CSVObj
             return new CSVObj(new ArrayList<>());
         }
 
-        List<String> headers = lines.get(0);
+        List<String> headers = lines.getFirst();
 
         boolean shouldHaveHeader = (hasHeader != null) ? hasHeader : shouldHaveHeader(headers, lines);
 
@@ -207,6 +207,18 @@ public class CSVObj
         return fields;
     }
 
+    public static CSVObj withHeaders(List<String> headers)
+    {
+        if (headers == null || headers.isEmpty())
+        {
+            throw new IllegalCSVException("Headers cannot be null or empty");
+        }
+
+        List<String> emptyValues = new ArrayList<>();
+
+        return new CSVObj(headers, emptyValues);
+    }
+
     public String toCSVString()
     {
         StringBuilder sb = new StringBuilder();
@@ -318,7 +330,7 @@ public class CSVObj
         }
         else
         {
-            return noHeaderCSValues.isEmpty() ? 0 : noHeaderCSValues.get(0).size();
+            return noHeaderCSValues.isEmpty() ? 0 : noHeaderCSValues.getFirst().size();
         }
     }
 
@@ -525,4 +537,137 @@ public class CSVObj
     {
         return this.hasHeaders;
     }
+
+    public void addHeader(String header)
+    {
+        if (!hasHeaders)
+        {
+            throw new IllegalCSVException("Cannot add header to CSV without existing headers");
+        }
+
+        if (headerCSValuesMap.containsKey(header))
+        {
+            throw new IllegalCSVException("Header '" + header + "' already exists");
+        }
+
+        int lineCount = getLineAmount();
+
+        List<String> emptyValues = new ArrayList<>(lineCount);
+        for (int i = 0; i < lineCount; i++)
+        {
+            emptyValues.add("");
+        }
+
+        headerList.add(header);
+        headerCSValuesMap.put(header, emptyValues);
+    }
+
+    public void addHeader(int index, String header)
+    {
+        if (!hasHeaders)
+        {
+            throw new IllegalCSVException("Cannot add header to CSV without existing headers");
+        }
+
+        if (headerCSValuesMap.containsKey(header))
+        {
+            throw new IllegalCSVException("Header '" + header + "' already exists");
+        }
+
+        if (index < 0 || index > headerList.size())
+        {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + headerList.size());
+        }
+
+        int lineCount = getLineAmount();
+
+        List<String> emptyValues = new ArrayList<>(lineCount);
+        for (int i = 0; i < lineCount; i++)
+        {
+            emptyValues.add("");
+        }
+
+        headerList.add(index, header);
+        headerCSValuesMap.put(header, emptyValues);
+    }
+
+    public void addHeader(List<String> headers)
+    {
+        if (headers == null || headers.isEmpty())
+        {
+            return;
+        }
+
+        if (!hasHeaders)
+        {
+            throw new IllegalCSVException("Cannot add headers to CSV without existing headers");
+        }
+
+        int lineCount = getLineAmount();
+
+        for (String header : headers)
+        {
+            if (headerCSValuesMap.containsKey(header))
+            {
+                throw new IllegalCSVException("Header '" + header + "' already exists");
+            }
+
+            List<String> emptyValues = new ArrayList<>(lineCount);
+            for (int i = 0; i < lineCount; i++)
+            {
+                emptyValues.add("");
+            }
+
+            headerList.add(header);
+            headerCSValuesMap.put(header, emptyValues);
+        }
+    }
+
+    public void addHeader(String header, String defaultValue)
+    {
+        if (!hasHeaders)
+        {
+            throw new IllegalCSVException("Cannot add header to CSV without existing headers");
+        }
+
+        if (headerCSValuesMap.containsKey(header))
+        {
+            throw new IllegalCSVException("Header '" + header + "' already exists");
+        }
+
+        int lineCount = getLineAmount();
+
+        List<String> defaultValues = new ArrayList<>(lineCount);
+        for (int i = 0; i < lineCount; i++)
+        {
+            defaultValues.add(defaultValue != null ? defaultValue : "");
+        }
+
+        headerList.add(header);
+        headerCSValuesMap.put(header, defaultValues);
+    }
+
+    public void addHeader(String header, List<String> values)
+    {
+        if (!hasHeaders)
+        {
+            throw new IllegalCSVException("Cannot add header to CSV without existing headers");
+        }
+
+        if (headerCSValuesMap.containsKey(header))
+        {
+            throw new IllegalCSVException("Header '" + header + "' already exists");
+        }
+
+        int lineCount = getLineAmount();
+        if (values == null || values.size() != lineCount)
+        {
+            throw new IllegalCSVException("Values size is expected to be " + lineCount + " but found " +
+                                          (values != null ? values.size() : "null"));
+        }
+
+        headerList.add(header);
+        headerCSValuesMap.put(header, new ArrayList<>(values));
+    }
+
 }

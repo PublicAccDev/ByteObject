@@ -34,6 +34,45 @@ public class BHashMap<Key extends DirectByteObj<?>, Value extends DirectByteObj<
         }
     }
 
+    public BHashMap(Map<Key, Value> map, Class<Key> keyClazz, Class<Value> valueClazz)
+    {
+        super(new HashMap<>(map));
+        try
+        {
+            this.keyConstructor = keyClazz.getConstructor(byte[].class);
+            this.valueConstructor = valueClazz.getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(keyClazz, valueClazz);
+        }
+    }
+
+    public BHashMap(int initialCapacity, Class<Key> keyClazz, Class<Value> valueClazz)
+    {
+        super(new HashMap<>(initialCapacity));
+        try
+        {
+            this.keyConstructor = keyClazz.getConstructor(byte[].class);
+            this.valueConstructor = valueClazz.getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(keyClazz, valueClazz);
+        }
+    }
+
+    public BHashMap(int initialCapacity, float loadFactor, Class<Key> keyClazz, Class<Value> valueClazz)
+    {
+        super(new HashMap<>(initialCapacity, loadFactor));
+        try
+        {
+            this.keyConstructor = keyClazz.getConstructor(byte[].class);
+            this.valueConstructor = valueClazz.getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(keyClazz, valueClazz);
+        }
+    }
+
     public BHashMap(Class<Key> keyClazz, Class<Value> valueClazz)
     {
         super(new HashMap<>());

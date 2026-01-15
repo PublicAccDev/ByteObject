@@ -1,9 +1,7 @@
 package org.pacc.ByteObj;
 
 import org.pacc.ByteObj.BasicData.BInteger;
-import org.pacc.ByteObj.BasicData.BString;
-import org.pacc.ByteObj.Container.BArrayDeque;
-import org.pacc.ByteObj.Container.BHashMap;
+import org.pacc.ByteObj.Container.BLinkedList;
 import org.pacc.ByteObj.Format.Object.CSVObj;
 import org.pacc.ByteObj.Format.Object.Json.JsonFormatConfig;
 import org.pacc.ByteObj.Format.Object.Json.JsonFormatOption;
@@ -14,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayDeque;
+import java.util.*;
 
 public class Test
 {
@@ -69,12 +67,22 @@ public class Test
 
     private static void testMethod4()
     {
+        BLinkedList<BInteger> list = new BLinkedList<>(BInteger.class);
+        list.add(new BInteger(1));
+        list.add(new BInteger(2));
+        list.add(new BInteger(3));
 
+        System.out.println(list.size());
     }
 
     private static void testMethod5()
     {
         long s = System.currentTimeMillis();
+
+        for (int i = 0; i < 10000000; i++)
+        {
+
+        }
 
         long e = System.currentTimeMillis();
         System.out.println("Time: " + (e - s) + " ms");

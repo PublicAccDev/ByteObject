@@ -8,6 +8,7 @@ import org.pacc.ByteObj.Serializer.ContainerSerializer;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
@@ -16,19 +17,6 @@ import java.util.stream.Stream;
 public class BLinkedHashSet<ByteObj extends DirectByteObj<?>> extends FastByteObj<LinkedHashSet<ByteObj>>
 {
     private final Constructor<ByteObj> constructor;
-
-    @SuppressWarnings("unchecked")
-    public BLinkedHashSet(LinkedHashSet<ByteObj> object)
-    {
-        super(object);
-        try
-        {
-            this.constructor = (Constructor<ByteObj>) object.getClass().getComponentType().getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(object.getClass().getComponentType());
-        }
-    }
 
     public BLinkedHashSet(LinkedHashSet<ByteObj> object, Class<ByteObj> clazz)
     {
@@ -42,9 +30,45 @@ public class BLinkedHashSet<ByteObj extends DirectByteObj<?>> extends FastByteOb
         }
     }
 
+    public BLinkedHashSet(Collection<ByteObj> object, Class<ByteObj> clazz)
+    {
+        super(new LinkedHashSet<>(object));
+        try
+        {
+            this.constructor = clazz.getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(clazz);
+        }
+    }
+
+    public BLinkedHashSet(int initialCapacity, Class<ByteObj> clazz)
+    {
+        super(new LinkedHashSet<>(initialCapacity));
+        try
+        {
+            this.constructor = clazz.getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(clazz);
+        }
+    }
+
+    public BLinkedHashSet(int initialCapacity, float loadFactor, Class<ByteObj> clazz)
+    {
+        super(new LinkedHashSet<>(initialCapacity, loadFactor));
+        try
+        {
+            this.constructor = clazz.getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new BytesConstructorMissingException(clazz);
+        }
+    }
+
     public BLinkedHashSet(Class<ByteObj> clazz)
     {
-        super(new byte[0]);
+        super(new LinkedHashSet<>());
         try
         {
             this.constructor = clazz.getConstructor(byte[].class);

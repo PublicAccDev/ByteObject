@@ -6,21 +6,25 @@ import org.pacc.ByteObj.Serializer.FormatObjSerializer;
 
 public class BJsonInteger extends DirectByteObj<JsonInteger>
 {
-    public BJsonInteger(JsonInteger object) {
+    public BJsonInteger(JsonInteger object)
+    {
         super(object);
     }
 
-    public BJsonInteger(byte[] objectBytesData) {
+    public BJsonInteger(byte[] objectBytesData)
+    {
         super(objectBytesData);
     }
 
     @Override
-    public byte[] serialize(JsonInteger object) {
+    public byte[] serialize(JsonInteger object)
+    {
         return FormatObjSerializer.serialize(object);
     }
 
     @Override
-    public JsonInteger deserialize(byte[] objectBytesData) {
+    public JsonInteger deserialize(byte[] objectBytesData)
+    {
         return FormatObjSerializer.deserializeJsonInteger(objectBytesData);
     }
 }

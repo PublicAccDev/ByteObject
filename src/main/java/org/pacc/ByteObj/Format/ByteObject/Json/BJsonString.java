@@ -6,21 +6,25 @@ import org.pacc.ByteObj.Serializer.FormatObjSerializer;
 
 public class BJsonString extends DirectByteObj<JsonString>
 {
-    public BJsonString(JsonString object) {
+    public BJsonString(JsonString object)
+    {
         super(object);
     }
 
-    public BJsonString(byte[] objectBytesData) {
+    public BJsonString(byte[] objectBytesData)
+    {
         super(objectBytesData);
     }
 
     @Override
-    public byte[] serialize(JsonString object) {
+    public byte[] serialize(JsonString object)
+    {
         return FormatObjSerializer.serialize(object);
     }
 
     @Override
-    public JsonString deserialize(byte[] objectBytesData) {
+    public JsonString deserialize(byte[] objectBytesData)
+    {
         return FormatObjSerializer.deserializeJsonString(objectBytesData);
     }
 }

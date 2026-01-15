@@ -6,21 +6,25 @@ import org.pacc.ByteObj.Serializer.FormatObjSerializer;
 
 public class BJsonNull extends DirectByteObj<JsonNull>
 {
-    public BJsonNull(JsonNull object) {
+    public BJsonNull(JsonNull object)
+    {
         super(object);
     }
 
-    public BJsonNull(byte[] objectBytesData) {
+    public BJsonNull(byte[] objectBytesData)
+    {
         super(objectBytesData);
     }
 
     @Override
-    public byte[] serialize(JsonNull object) {
+    public byte[] serialize(JsonNull object)
+    {
         return FormatObjSerializer.serialize(object);
     }
 
     @Override
-    public JsonNull deserialize(byte[] objectBytesData) {
+    public JsonNull deserialize(byte[] objectBytesData)
+    {
         return FormatObjSerializer.deserializeJsonNull(objectBytesData);
     }
 }

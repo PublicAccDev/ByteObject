@@ -34,5 +34,5 @@ public class BInteger extends DirectByteObj<Integer>
         }
     }
 
-    
+
 }

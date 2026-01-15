@@ -34,5 +34,5 @@ public class BFloat extends DirectByteObj<Float>
         }
     }
 
-    
+
 }

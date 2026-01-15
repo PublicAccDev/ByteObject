@@ -33,6 +33,4 @@ public class BBoolean extends DirectByteObj<Boolean>
             throw new InvalidFormatException(e, Boolean.class);
         }
     }
-
-
 }

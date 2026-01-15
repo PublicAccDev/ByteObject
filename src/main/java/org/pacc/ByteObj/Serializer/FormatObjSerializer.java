@@ -4,9 +4,6 @@ import org.pacc.ByteObj.Format.Object.CSVObj;
 import org.pacc.ByteObj.Format.Object.Json.JsonParser;
 import org.pacc.ByteObj.Format.Object.Json.Value.*;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-
 public class FormatObjSerializer
 {
     public static byte[] serialize(CSVObj object)
@@ -106,7 +103,7 @@ public class FormatObjSerializer
 
     public static JsonString deserializeJsonString(byte[] bytes)
     {
-            return new JsonString(BasicDataSerializer.deserializeString(bytes));
+        return new JsonString(BasicDataSerializer.deserializeString(bytes));
     }
 
     public static byte[] serialize(JsonObj object)
