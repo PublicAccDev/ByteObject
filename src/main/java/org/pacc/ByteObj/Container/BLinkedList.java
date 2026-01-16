@@ -4,52 +4,67 @@ import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
 import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
+import org.pacc.ByteObj.Serializer.DeserializeResult;
 
 import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-public class BLinkedList<ByteObj extends DirectByteObj<?>> extends FastByteObj<LinkedList<ByteObj>>
+public class BLinkedList<ByteObj extends DirectByteObj<?>> extends DirectByteObj<LinkedList<ByteObj>>
 {
-    private final Constructor<ByteObj> constructor;
+    private Constructor<ByteObj> constructor;
+
+    public BLinkedList()
+    {
+        super(new LinkedList<>());
+        initConstructor(null);
+    }
+
+    public BLinkedList(LinkedList<ByteObj> object)
+    {
+        super(object);
+        initConstructor(null);
+    }
+
+    public BLinkedList(Collection<ByteObj> object)
+    {
+        super(new LinkedList<>(object));
+        initConstructor(null);
+    }
 
     public BLinkedList(LinkedList<ByteObj> object, Class<ByteObj> clazz)
     {
         super(object);
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BLinkedList(Collection<ByteObj> object, Class<ByteObj> clazz)
     {
         super(new LinkedList<>(object));
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BLinkedList(Class<ByteObj> clazz)
     {
         super(new LinkedList<>());
+        initConstructor(clazz);
+    }
+
+    public BLinkedList(byte[] objectBytesData)
+    {
+        super(objectBytesData);
+        initConstructor(null);
+    }
+
+    private void initConstructor(Class<ByteObj> clazz)
+    {
         try
         {
-            this.constructor = clazz.getConstructor(byte[].class);
+            constructor = clazz == null ? null : clazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(clazz);
@@ -59,13 +74,16 @@ public class BLinkedList<ByteObj extends DirectByteObj<?>> extends FastByteObj<L
     @Override
     public byte[] serialize(LinkedList<ByteObj> object)
     {
-        return ContainerSerializer.serialize(object);
+        return ContainerSerializer.serialize(object, this.constructor);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public LinkedList<ByteObj> deserialize(byte[] objectBytesData)
     {
-        return ContainerSerializer.deserializeLinkedList(objectBytesData, this.constructor);
+        DeserializeResult result = ContainerSerializer.deserializeIterable(objectBytesData, this.constructor);
+        this.constructor = (Constructor<ByteObj>) result.constructor()[0];
+        return (LinkedList<ByteObj>) result.object();
     }
 
     public ByteObj get(int index)

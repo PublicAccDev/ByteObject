@@ -4,98 +4,113 @@ import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
 import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
+import org.pacc.ByteObj.Serializer.DeserializeResult;
 
 import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class BHashMap<Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> extends FastByteObj<HashMap<Key, Value>>
+public class BHashMap<Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> extends DirectByteObj<HashMap<Key, Value>>
 {
 
-    private final Constructor<Key> keyConstructor;
-    private final Constructor<Value> valueConstructor;
+    private Constructor<Key> keyConstructor;
+    private Constructor<Value> valueConstructor;
 
-    public BHashMap(HashMap<Key, Value> map, Class<Key> keyClazz, Class<Value> valueClazz)
-    {
-        super(map);
-        try
-        {
-            this.keyConstructor = keyClazz.getConstructor(byte[].class);
-            this.valueConstructor = valueClazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(keyClazz, valueClazz);
-        }
-    }
-
-    public BHashMap(Map<Key, Value> map, Class<Key> keyClazz, Class<Value> valueClazz)
-    {
-        super(new HashMap<>(map));
-        try
-        {
-            this.keyConstructor = keyClazz.getConstructor(byte[].class);
-            this.valueConstructor = valueClazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(keyClazz, valueClazz);
-        }
-    }
-
-    public BHashMap(int initialCapacity, Class<Key> keyClazz, Class<Value> valueClazz)
-    {
-        super(new HashMap<>(initialCapacity));
-        try
-        {
-            this.keyConstructor = keyClazz.getConstructor(byte[].class);
-            this.valueConstructor = valueClazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(keyClazz, valueClazz);
-        }
-    }
-
-    public BHashMap(int initialCapacity, float loadFactor, Class<Key> keyClazz, Class<Value> valueClazz)
-    {
-        super(new HashMap<>(initialCapacity, loadFactor));
-        try
-        {
-            this.keyConstructor = keyClazz.getConstructor(byte[].class);
-            this.valueConstructor = valueClazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(keyClazz, valueClazz);
-        }
-    }
-
-    public BHashMap(Class<Key> keyClazz, Class<Value> valueClazz)
+    public BHashMap()
     {
         super(new HashMap<>());
+        initConstructor(null, null);
+    }
+
+    public BHashMap(HashMap<Key, Value> map)
+    {
+        super(map);
+        initConstructor(null, null);
+    }
+
+    public BHashMap(Map<Key, Value> map)
+    {
+        super(new HashMap<>(map));
+        initConstructor(null, null);
+    }
+
+    public BHashMap(int initialCapacity)
+    {
+        super(new HashMap<>(initialCapacity));
+        initConstructor(null, null);
+    }
+
+    public BHashMap(int initialCapacity, float loadFactor)
+    {
+        super(new HashMap<>(initialCapacity, loadFactor));
+        initConstructor(null, null);
+    }
+
+    public BHashMap(HashMap<Key, Value> map, Class<Key> keyClass, Class<Value> valueClass)
+    {
+        super(map);
+        initConstructor(keyClass, valueClass);
+    }
+
+    public BHashMap(Map<Key, Value> map, Class<Key> keyClass, Class<Value> valueClass)
+    {
+        super(new HashMap<>(map));
+        initConstructor(keyClass, valueClass);
+    }
+
+    public BHashMap(int initialCapacity, Class<Key> keyClass, Class<Value> valueClass)
+    {
+        super(new HashMap<>(initialCapacity));
+        initConstructor(keyClass, valueClass);
+    }
+
+    public BHashMap(int initialCapacity, float loadFactor, Class<Key> keyClass, Class<Value> valueClass)
+    {
+        super(new HashMap<>(initialCapacity, loadFactor));
+        initConstructor(keyClass, valueClass);
+    }
+
+    public BHashMap(Class<Key> keyClass, Class<Value> valueClass)
+    {
+        super(new HashMap<>());
+        initConstructor(keyClass, valueClass);
+    }
+
+    public BHashMap(byte[] objectBytesData)
+    {
+        super(objectBytesData);
+        initConstructor(null, null);
+    }
+
+    private void initConstructor(Class<Key> keyClass, Class<Value> valueClass)
+    {
         try
         {
-            this.keyConstructor = keyClazz.getConstructor(byte[].class);
-            this.valueConstructor = valueClazz.getConstructor(byte[].class);
+            this.keyConstructor = keyClass == null ? null : keyClass.getConstructor(byte[].class);
+            this.valueConstructor = valueClass == null ? null : valueClass.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
-            throw new BytesConstructorMissingException(keyClazz, valueClazz);
+            throw new BytesConstructorMissingException(keyClass, valueClass);
         }
     }
 
     @Override
-    public byte[] serialize(HashMap<Key, Value> map)
+    public byte[] serialize(HashMap<Key, Value> object)
     {
-        return ContainerSerializer.serialize(map);
+        return ContainerSerializer.serialize(object, this.keyConstructor, this.valueConstructor);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public HashMap<Key, Value> deserialize(byte[] objectBytesData)
     {
-        return ContainerSerializer.deserializeHashMap(objectBytesData, this.keyConstructor, this.valueConstructor);
+        DeserializeResult result = ContainerSerializer.deserializeMap(objectBytesData, this.keyConstructor, this.valueConstructor);
+        this.keyConstructor = (Constructor<Key>) result.constructor()[0];
+        this.valueConstructor = (Constructor<Value>) result.constructor()[1];
+        return (HashMap<Key, Value>) result.object();
     }
 
     public Value put(Key key, Value value)

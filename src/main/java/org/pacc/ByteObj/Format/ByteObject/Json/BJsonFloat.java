@@ -1,6 +1,7 @@
 package org.pacc.ByteObj.Format.ByteObject.Json;
 
 import org.pacc.ByteObj.DirectByteObj;
+import org.pacc.ByteObj.Format.Object.Json.Value.JsonDouble;
 import org.pacc.ByteObj.Format.Object.Json.Value.JsonFloat;
 import org.pacc.ByteObj.Serializer.FormatObjSerializer;
 
@@ -9,6 +10,11 @@ public class BJsonFloat extends DirectByteObj<JsonFloat>
     public BJsonFloat(JsonFloat object)
     {
         super(object);
+    }
+
+    public BJsonFloat(Float value)
+    {
+        super(new JsonFloat(value));
     }
 
     public BJsonFloat(byte[] objectBytesData)

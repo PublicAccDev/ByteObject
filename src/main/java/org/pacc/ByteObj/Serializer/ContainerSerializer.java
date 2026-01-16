@@ -1,6 +1,5 @@
 package org.pacc.ByteObj.Serializer;
 
-import org.pacc.ByteObj.BaseByteObj;
 import org.pacc.ByteObj.DirectByteObj;
 
 import java.lang.reflect.Array;
@@ -12,7 +11,27 @@ import java.util.*;
 public class ContainerSerializer
 {
 
-    public static <ByteObj extends BaseByteObj<?>> byte[] serialize(ByteObj[] objects)
+    public static <ByteObj extends DirectByteObj<?>> byte[] serialize(ByteObj[] objects, Constructor<ByteObj> constructor)
+    {
+        return serializeArrayInternal(objects, constructor);
+    }
+
+    public static <ByteObj extends DirectByteObj<?>> byte[] serialize(Collection<ByteObj> list, Constructor<ByteObj> constructor)
+    {
+        return serializeIterableInternal(list, constructor);
+    }
+
+    public static <ByteObj extends DirectByteObj<?>> byte[] serialize(LinkedList<ByteObj> list, Constructor<ByteObj> constructor)
+    {
+        return serializeIterableInternal(list, constructor);
+    }
+
+    public static <Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> byte[] serialize(Map<Key, Value> map, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
+    {
+        return serializeMapInternal(map, keyConstructor, valueConstructor);
+    }
+
+    public static <ByteObj extends DirectByteObj<?>> byte[] serializeArrayInternal(ByteObj[] objects)
     {
         int totalLength = Arrays.stream(objects)
                                 .mapToInt(obj -> 4 + obj.getBytes().length)
@@ -26,49 +45,19 @@ public class ContainerSerializer
         return buffer.array();
     }
 
-    @SuppressWarnings("unchecked")
-    public static <ByteObj extends DirectByteObj<?>> ByteObj[] deserializeArray(byte[] data, Class<ByteObj> clazz, Constructor<ByteObj> constructor)
+    public static <ByteObj extends DirectByteObj<?>> byte[] serializeArrayInternal(ByteObj[] objects, Constructor<ByteObj> constructor)
     {
-        List<ByteObj> list = (List<ByteObj>) deserializeCollection(data, constructor);
-        return list.toArray((ByteObj[]) Array.newInstance(clazz, list.size()));
+        try
+        {
+            ByteObj first = objects.length != 0 ? objects[0] : null;
+            return addClassHeader(serializeArrayInternal(objects), constructor == null ? first == null ? null : first.getClass().getConstructor(byte[].class) : constructor);
+        } catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static <ByteObj extends BaseByteObj<?>> byte[] serialize(List<ByteObj> list)
-    {
-        return serializeIterable(list);
-    }
-
-    public static <ByteObj extends BaseByteObj<?>> byte[] serialize(LinkedList<ByteObj> list)
-    {
-        return serializeIterable(list);
-    }
-
-    public static <ByteObj extends DirectByteObj<?>> ArrayList<ByteObj> deserializeArrayList(byte[] data, Constructor<ByteObj> constructor)
-    {
-        return new ArrayList<>(deserializeCollection(data, constructor));
-    }
-
-    public static <ByteObj extends DirectByteObj<?>> LinkedList<ByteObj> deserializeLinkedList(byte[] data, Constructor<ByteObj> constructor)
-    {
-        return new LinkedList<>(deserializeCollection(data, constructor));
-    }
-
-    public static <ByteObj extends BaseByteObj<?>> byte[] serialize(Set<ByteObj> set)
-    {
-        return serializeIterable(set);
-    }
-
-    public static <ByteObj extends DirectByteObj<?>> HashSet<ByteObj> deserializeHashSet(byte[] data, Constructor<ByteObj> constructor)
-    {
-        return new HashSet<>(deserializeCollection(data, constructor));
-    }
-
-    public static <ByteObj extends DirectByteObj<?>> LinkedHashSet<ByteObj> deserializeLinkedHashSet(byte[] data, Constructor<ByteObj> constructor)
-    {
-        return new LinkedHashSet<>(deserializeCollection(data, constructor));
-    }
-
-    public static <Key extends BaseByteObj<?>, Value extends BaseByteObj<?>> byte[] serialize(Map<Key, Value> map)
+    public static <Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> byte[] serializeMapInternal(Map<Key, Value> map)
     {
         int totalLength = map.entrySet().stream()
                              .mapToInt(entry -> 8 + entry.getKey().getBytes().length + entry.getValue().getBytes().length)
@@ -84,34 +73,22 @@ public class ContainerSerializer
         return buffer.array();
     }
 
-    public static <Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> HashMap<Key, Value> deserializeHashMap(byte[] data, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
+    public static <Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> byte[] serializeMapInternal(Map<Key, Value> map, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
     {
-        return new HashMap<>(deserializeMap(data, keyConstructor, valueConstructor));
+        try
+        {
+            Iterator<Map.Entry<Key, Value>> it = map.entrySet().iterator();
+            Map.Entry<Key, Value> first = it.hasNext() ? it.next() : null;
+            return addClassHeader(serializeMapInternal(map),
+                                  keyConstructor == null ? first == null ? null : first.getKey().getClass().getConstructor(byte[].class) : keyConstructor,
+                                  valueConstructor == null ? first == null ? null : first.getValue().getClass().getConstructor(byte[].class) : valueConstructor);
+        } catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static <Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> LinkedHashMap<Key, Value> deserializeLinkedHashMap(byte[] data, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
-    {
-        return new LinkedHashMap<>(deserializeMap(data, keyConstructor, valueConstructor));
-    }
-
-    public static <ByteObj extends BaseByteObj<?>> byte[] serialize(Queue<ByteObj> deque)
-    {
-        return serializeIterable(deque);
-    }
-
-    public static <ByteObj extends DirectByteObj<?>> ArrayDeque<ByteObj> deserializeArrayDeque(byte[] data, Constructor<ByteObj> constructor)
-    {
-        Collection<ByteObj> collection = deserializeCollection(data, constructor);
-        return new ArrayDeque<>(collection);
-    }
-
-    public static <ByteObj extends DirectByteObj<?>> PriorityQueue<ByteObj> deserializePriorityQueue(byte[] data, Constructor<ByteObj> constructor)
-    {
-        Collection<ByteObj> collection = deserializeCollection(data, constructor);
-        return new PriorityQueue<>(collection);
-    }
-
-    public static <ByteObj extends BaseByteObj<?>> byte[] serializeIterable(Iterable<ByteObj> iterable)
+    private static <ByteObj extends DirectByteObj<?>> byte[] serializeIterableInternal(Iterable<ByteObj> iterable)
     {
         int totalLength = 0;
         for (ByteObj obj : iterable)
@@ -128,10 +105,48 @@ public class ContainerSerializer
         return buffer.array();
     }
 
-    public static <ByteObj extends DirectByteObj<?>> Collection<ByteObj> deserializeCollection(byte[] data, Constructor<ByteObj> constructor)
+    private static <ByteObj extends DirectByteObj<?>> byte[] serializeIterableInternal(Iterable<ByteObj> iterable, Constructor<ByteObj> constructor)
     {
         try
         {
+            ByteObj first = iterable.iterator().hasNext() ? iterable.iterator().next() : null;
+            return addClassHeader(serializeIterableInternal(iterable), constructor == null ? first == null ? null : first.getClass().getConstructor(byte[].class) : constructor);
+        } catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> DeserializeResult deserializeMap(byte[] data, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
+    {
+        return deserializeMapInternal(data, keyConstructor, valueConstructor);
+    }
+
+    public static <ByteObj extends DirectByteObj<?>> DeserializeResult deserializeIterable(byte[] data, Constructor<ByteObj> constructor)
+    {
+        return deserializeCollectionInternal(data, constructor);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <ByteObj extends DirectByteObj<?>> DeserializeResult deserializeArray(byte[] data, Constructor<ByteObj> constructor)
+    {
+        if(constructor == null)
+        {
+            constructor = (Constructor<ByteObj>) getSingleConstructor(data);
+        }
+        DeserializeResult result = deserializeCollectionInternal(data, constructor);
+        List<ByteObj> list = (List<ByteObj>)result.object();
+        return new DeserializeResult(list.toArray((ByteObj[]) Array.newInstance(constructor.getDeclaringClass(), list.size())), new Constructor[]{constructor});
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <ByteObj extends DirectByteObj<?>> DeserializeResult deserializeCollectionInternal(byte[] data, Constructor<ByteObj> constructor)
+    {
+        try
+        {
+            Class<?> oneClass = getSingleClass(data);
+            Constructor<ByteObj> byteObjConstructor = constructor == null ? (Constructor<ByteObj>) getSingleConstructor(oneClass) : constructor;
+            data = removeClassHeader(data);
             int index = 0;
             List<ByteObj> list = new ArrayList<>();
             while (index < data.length)
@@ -140,20 +155,30 @@ public class ContainerSerializer
                 index += 4;
                 byte[] slice = new byte[length];
                 System.arraycopy(data, index, slice, 0, length);
-                list.add(constructor.newInstance((Object) slice));
+                list.add(byteObjConstructor.newInstance((Object) slice));
                 index += length;
             }
-            return list;
+            return new DeserializeResult(list, new Constructor[]{byteObjConstructor});
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
         {
             throw new RuntimeException(e);
         }
     }
 
-    public static <Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> Map<Key, Value> deserializeMap(byte[] data, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
+    @SuppressWarnings("unchecked")
+    private static <Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> DeserializeResult deserializeMapInternal(byte[] data, Constructor<Key> keyConstructor, Constructor<Value> valueConstructor)
     {
         try
         {
+            Class<?>[] twoClass = getTwoClass(data);
+            Constructor<?>[] constructors = new Constructor[0];
+            if(keyConstructor == null || valueConstructor == null)
+            {
+                constructors = getTwoConstructors(twoClass);
+            }
+            Constructor<Key> keyByteObjConstructor = keyConstructor == null ? (Constructor<Key>) constructors[0] : keyConstructor;
+            Constructor<Value> valueByteObjConstructor = valueConstructor == null ? (Constructor<Value>) constructors[1] : valueConstructor;
+            data = removeClassHeader(data);
             int index = 0;
             Map<Key, Value> map = new LinkedHashMap<>();
             while (index < data.length)
@@ -164,14 +189,159 @@ public class ContainerSerializer
                 byte[] valueSlice = new byte[valueLength];
                 System.arraycopy(data, index + 8, keySlice, 0, keyLength);
                 System.arraycopy(data, index + 8 + keyLength, valueSlice, 0, valueLength);
-                map.put(keyConstructor.newInstance((Object) keySlice),
-                        valueConstructor.newInstance((Object) valueSlice));
+                map.put(keyByteObjConstructor.newInstance((Object) keySlice),
+                        valueByteObjConstructor.newInstance((Object) valueSlice));
                 index += 8 + keyLength + valueLength;
             }
-            return map;
+            return new DeserializeResult(map, new Constructor[]{keyByteObjConstructor, valueByteObjConstructor});
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
         {
             throw new RuntimeException(e);
         }
     }
+
+    private static Class<?> getSingleClass(byte[] bytes)
+    {
+        try
+        {
+            byte[] slice = new byte[4];
+            System.arraycopy(bytes, 0, slice, 0, 4);
+            int length = ByteBuffer.wrap(slice).getInt();
+            byte[] nameSlice = new byte[length];
+            System.arraycopy(bytes, 4, nameSlice, 0, length);
+
+            return Class.forName(BasicDataSerializer.deserializeString(nameSlice));
+        } catch (ClassNotFoundException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Class<?>[] getTwoClass(byte[] bytes)
+    {
+        try
+        {
+            byte[] kL = new byte[4];
+            System.arraycopy(bytes, 0, kL, 0, 4);
+            int kLength = ByteBuffer.wrap(kL).getInt();
+            byte[] kName = new byte[kLength];
+            System.arraycopy(bytes, 4, kName, 0, kLength);
+            Class<?> keyClass = Class.forName(BasicDataSerializer.deserializeString(kName));
+
+            byte[] vL = new byte[4];
+            System.arraycopy(bytes, kLength+4, vL, 0, 4);
+            int vLength = ByteBuffer.wrap(vL).getInt();
+            byte[] vName = new byte[vLength];
+            System.arraycopy(bytes, kLength+8, vName, 0, vLength);
+            Class<?> valueClass = Class.forName(BasicDataSerializer.deserializeString(vName));
+
+            return new Class[]{keyClass, valueClass};
+        } catch (ClassNotFoundException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Constructor<?>[] getTwoConstructors(byte[] bytes)
+    {
+        Class<?>[] classes = getTwoClass(bytes);
+        try
+        {
+            return new Constructor[]{classes[0].getConstructor(byte[].class), classes[1].getConstructor(byte[].class)};
+        } catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Constructor<?>[] getTwoConstructors(Class<?>[] clazz)
+    {
+        try
+        {
+            return new Constructor[]{clazz[0].getConstructor(byte[].class), clazz[1].getConstructor(byte[].class)};
+        } catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Constructor<?> getSingleConstructor(byte[] bytes)
+    {
+        try
+        {
+            return getSingleClass(bytes).getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Constructor<?> getSingleConstructor(Class<?> clazz)
+    {
+        try
+        {
+            return clazz.getConstructor(byte[].class);
+        } catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static byte[] removeClassHeader(byte[] bytes)
+    {
+        byte[] slice = new byte[4];
+        System.arraycopy(bytes, 0, slice, 0, 4);
+        int length = ByteBuffer.wrap(slice).getInt();
+        byte[] result = new byte[bytes.length-length-4];
+        System.arraycopy(bytes, length+4, result, 0, bytes.length-length-4);
+        return result;
+    }
+
+    private static byte[] addClassHeader(byte[] bytes, Constructor<?> c)
+    {
+        try
+        {
+            if(c == null)
+            {
+                c = Object.class.getConstructor();
+            }
+        } catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException(e);
+        }
+        byte[] className = BasicDataSerializer.serialize(c.getDeclaringClass().getName());
+        ByteBuffer buffer = ByteBuffer.allocate(className.length+4+bytes.length);
+        buffer.putInt(className.length);
+        buffer.put(className);
+        buffer.put(bytes);
+        return buffer.array();
+    }
+
+    private static byte[] addClassHeader(byte[] bytes, Constructor<?> c1, Constructor<?> c2)
+    {
+        try
+        {
+            if(c1 == null)
+            {
+                c1 = Object.class.getConstructor();
+            }
+            if(c2 == null)
+            {
+                c2 = Object.class.getConstructor();
+            }
+        } catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException(e);
+        }
+        byte[] className1 = BasicDataSerializer.serialize(c1.getDeclaringClass().getName());
+        byte[] className2 = BasicDataSerializer.serialize(c2.getDeclaringClass().getName());
+        ByteBuffer buffer = ByteBuffer.allocate(className1.length+className2.length+8+bytes.length);
+        buffer.putInt(className1.length);
+        buffer.put(className1);
+        buffer.putInt(className2.length);
+        buffer.put(className2);
+        buffer.put(bytes);
+        return buffer.array();
+    }
+
 }

@@ -4,64 +4,79 @@ import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
 import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
+import org.pacc.ByteObj.Serializer.DeserializeResult;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<ArrayList<ByteObj>>
+public class BArrayList<ByteObj extends DirectByteObj<?>> extends DirectByteObj<ArrayList<ByteObj>>
 {
-    private final Constructor<ByteObj> constructor;
+    private Constructor<ByteObj> constructor;
+
+    public BArrayList()
+    {
+        super(new ArrayList<>());
+        initConstructor(null);
+    }
+
+    public BArrayList(ArrayList<ByteObj> object)
+    {
+        super(object);
+        initConstructor(null);
+    }
+
+    public BArrayList(Collection<ByteObj> object)
+    {
+        super(new ArrayList<>(object));
+        initConstructor(null);
+    }
+
+    public BArrayList(int initialCapacity)
+    {
+        super(new ArrayList<>(initialCapacity));
+        initConstructor(null);
+    }
 
     public BArrayList(ArrayList<ByteObj> object, Class<ByteObj> clazz)
     {
         super(object);
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BArrayList(Collection<ByteObj> object, Class<ByteObj> clazz)
     {
         super(new ArrayList<>(object));
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BArrayList(int initialCapacity, Class<ByteObj> clazz)
     {
         super(new ArrayList<>(initialCapacity));
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BArrayList(Class<ByteObj> clazz)
     {
         super(new ArrayList<>());
+        initConstructor(clazz);
+    }
+
+    public BArrayList(byte[] objectBytesData)
+    {
+        super(objectBytesData);
+        initConstructor(null);
+    }
+
+    private void initConstructor(Class<ByteObj> clazz)
+    {
         try
         {
-            this.constructor = clazz.getConstructor(byte[].class);
+            constructor = clazz == null ? null : clazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(clazz);
@@ -71,13 +86,16 @@ public class BArrayList<ByteObj extends DirectByteObj<?>> extends FastByteObj<Ar
     @Override
     public byte[] serialize(ArrayList<ByteObj> object)
     {
-        return ContainerSerializer.serialize(object);
+        return ContainerSerializer.serialize(object, this.constructor);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ArrayList<ByteObj> deserialize(byte[] objectBytesData)
     {
-        return ContainerSerializer.deserializeArrayList(objectBytesData, this.constructor);
+        DeserializeResult result = ContainerSerializer.deserializeIterable(objectBytesData, this.constructor);
+        this.constructor = (Constructor<ByteObj>) result.constructor()[0];
+        return (ArrayList<ByteObj>) result.object();
     }
 
     public ByteObj get(int index)

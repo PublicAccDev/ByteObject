@@ -4,111 +4,125 @@ import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
 import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
+import org.pacc.ByteObj.Serializer.DeserializeResult;
 
 import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class BLinkedHashMap<Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> extends FastByteObj<LinkedHashMap<Key, Value>>
+public class BLinkedHashMap<Key extends DirectByteObj<?>, Value extends DirectByteObj<?>> extends DirectByteObj<LinkedHashMap<Key, Value>>
 {
 
-    private final Constructor<Key> keyConstructor;
-    private final Constructor<Value> valueConstructor;
+    private Constructor<Key> keyConstructor;
+    private Constructor<Value> valueConstructor;
 
-    public BLinkedHashMap(LinkedHashMap<Key, Value> map, Class<Key> keyClazz, Class<Value> valueClazz)
-    {
-        super(map);
-        try
-        {
-            this.keyConstructor = keyClazz.getConstructor(byte[].class);
-            this.valueConstructor = valueClazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(keyClazz, valueClazz);
-        }
-    }
-
-    public BLinkedHashMap(Map<Key, Value> map, Class<Key> keyClazz, Class<Value> valueClazz)
-    {
-        super(new LinkedHashMap<>(map));
-        try
-        {
-            this.keyConstructor = keyClazz.getConstructor(byte[].class);
-            this.valueConstructor = valueClazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(keyClazz, valueClazz);
-        }
-    }
-
-    public BLinkedHashMap(int initialCapacity, Class<Key> keyClazz, Class<Value> valueClazz)
-    {
-        super(new LinkedHashMap<>(initialCapacity));
-        try
-        {
-            this.keyConstructor = keyClazz.getConstructor(byte[].class);
-            this.valueConstructor = valueClazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(keyClazz, valueClazz);
-        }
-    }
-
-    public BLinkedHashMap(int initialCapacity, float loadFactor, Class<Key> keyClazz, Class<Value> valueClazz)
-    {
-        super(new LinkedHashMap<>(initialCapacity, loadFactor));
-        try
-        {
-            this.keyConstructor = keyClazz.getConstructor(byte[].class);
-            this.valueConstructor = valueClazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(keyClazz, valueClazz);
-        }
-    }
-
-    public BLinkedHashMap(int initialCapacity, float loadFactor, boolean accessOrder, Class<Key> keyClazz, Class<Value> valueClazz)
-    {
-        super(new LinkedHashMap<>(initialCapacity, loadFactor, accessOrder));
-        try
-        {
-            this.keyConstructor = keyClazz.getConstructor(byte[].class);
-            this.valueConstructor = valueClazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(keyClazz, valueClazz);
-        }
-    }
-
-    public BLinkedHashMap(Class<Key> keyClazz, Class<Value> valueClazz)
+    public BLinkedHashMap()
     {
         super(new LinkedHashMap<>());
+        initConstructor(null, null);
+    }
+
+    public BLinkedHashMap(LinkedHashMap<Key, Value> map)
+    {
+        super(map);
+        initConstructor(null, null);
+    }
+
+    public BLinkedHashMap(Map<Key, Value> map)
+    {
+        super(new LinkedHashMap<>(map));
+        initConstructor(null, null);
+    }
+
+    public BLinkedHashMap(int initialCapacity)
+    {
+        super(new LinkedHashMap<>(initialCapacity));
+        initConstructor(null, null);
+    }
+
+    public BLinkedHashMap(int initialCapacity, float loadFactor)
+    {
+        super(new LinkedHashMap<>(initialCapacity, loadFactor));
+        initConstructor(null, null);
+    }
+
+    public BLinkedHashMap(int initialCapacity, float loadFactor, boolean accessOrder)
+    {
+        super(new LinkedHashMap<>(initialCapacity, loadFactor, accessOrder));
+        initConstructor(null, null);
+    }
+
+    public BLinkedHashMap(LinkedHashMap<Key, Value> map, Class<Key> keyClass, Class<Value> valueClass)
+    {
+        super(map);
+        initConstructor(keyClass, valueClass);
+    }
+
+    public BLinkedHashMap(Map<Key, Value> map, Class<Key> keyClass, Class<Value> valueClass)
+    {
+        super(new LinkedHashMap<>(map));
+        initConstructor(keyClass, valueClass);
+    }
+
+    public BLinkedHashMap(int initialCapacity, Class<Key> keyClass, Class<Value> valueClass)
+    {
+        super(new LinkedHashMap<>(initialCapacity));
+        initConstructor(keyClass, valueClass);
+    }
+
+    public BLinkedHashMap(int initialCapacity, float loadFactor, Class<Key> keyClass, Class<Value> valueClass)
+    {
+        super(new LinkedHashMap<>(initialCapacity, loadFactor));
+        initConstructor(keyClass, valueClass);
+    }
+
+    public BLinkedHashMap(int initialCapacity, float loadFactor, boolean accessOrder, Class<Key> keyClass, Class<Value> valueClass)
+    {
+        super(new LinkedHashMap<>(initialCapacity, loadFactor, accessOrder));
+        initConstructor(keyClass, valueClass);
+    }
+
+    public BLinkedHashMap(Class<Key> keyClass, Class<Value> valueClass)
+    {
+        super(new LinkedHashMap<>());
+        initConstructor(keyClass, valueClass);
+    }
+
+    public BLinkedHashMap(byte[] objectBytesData)
+    {
+        super(objectBytesData);
+        initConstructor(null, null);
+    }
+
+    private void initConstructor(Class<Key> keyClass, Class<Value> valueClass)
+    {
         try
         {
-            this.keyConstructor = keyClazz.getConstructor(byte[].class);
-            this.valueConstructor = valueClazz.getConstructor(byte[].class);
+            this.keyConstructor = keyClass == null ? null : keyClass.getConstructor(byte[].class);
+            this.valueConstructor = valueClass == null ? null : valueClass.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
-            throw new BytesConstructorMissingException(keyClazz, valueClazz);
+            throw new BytesConstructorMissingException(keyClass, valueClass);
         }
     }
 
     @Override
-    public byte[] serialize(LinkedHashMap<Key, Value> map)
+    public byte[] serialize(LinkedHashMap<Key, Value> object)
     {
-        return ContainerSerializer.serialize(map);
+        return ContainerSerializer.serialize(object, this.keyConstructor, this.valueConstructor);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public LinkedHashMap<Key, Value> deserialize(byte[] objectBytesData)
     {
-        return ContainerSerializer.deserializeLinkedHashMap(objectBytesData, this.keyConstructor, this.valueConstructor);
+        DeserializeResult result = ContainerSerializer.deserializeMap(objectBytesData, this.keyConstructor, this.valueConstructor);
+        this.keyConstructor = (Constructor<Key>) result.constructor()[0];
+        this.valueConstructor = (Constructor<Value>) result.constructor()[1];
+        return (LinkedHashMap<Key, Value>) result.object();
     }
 
     public Value put(Key key, Value value)

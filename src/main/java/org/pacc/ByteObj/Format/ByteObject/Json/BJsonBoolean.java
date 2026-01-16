@@ -11,6 +11,11 @@ public class BJsonBoolean extends DirectByteObj<JsonBoolean>
         super(object);
     }
 
+    public BJsonBoolean(Boolean value)
+    {
+        super(new JsonBoolean(value));
+    }
+
     public BJsonBoolean(byte[] objectBytesData)
     {
         super(objectBytesData);

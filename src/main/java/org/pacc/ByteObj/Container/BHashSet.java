@@ -4,8 +4,10 @@ import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
 import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
+import org.pacc.ByteObj.Serializer.DeserializeResult;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,78 +18,98 @@ import java.util.stream.Stream;
 
 public class BHashSet<ByteObj extends DirectByteObj<?>> extends FastByteObj<HashSet<ByteObj>>
 {
-    private final Constructor<ByteObj> constructor;
+    private Constructor<ByteObj> constructor;
+
+    public BHashSet()
+    {
+        super(new HashSet<>());
+        initConstructor(null);
+    }
+
+    public BHashSet(HashSet<ByteObj> object)
+    {
+        super(object);
+        initConstructor(null);
+    }
+
+    public BHashSet(Collection<ByteObj> object)
+    {
+        super(new HashSet<>(object));
+        initConstructor(null);
+    }
+
+    public BHashSet(int initialCapacity)
+    {
+        super(new HashSet<>(initialCapacity));
+        initConstructor(null);
+    }
+
+    public BHashSet(int initialCapacity, float loadFactor)
+    {
+        super(new HashSet<>(initialCapacity, loadFactor));
+        initConstructor(null);
+    }
 
     public BHashSet(HashSet<ByteObj> object, Class<ByteObj> clazz)
     {
         super(object);
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BHashSet(Collection<ByteObj> object, Class<ByteObj> clazz)
     {
         super(new HashSet<>(object));
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BHashSet(int initialCapacity, Class<ByteObj> clazz)
     {
         super(new HashSet<>(initialCapacity));
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BHashSet(int initialCapacity, float loadFactor, Class<ByteObj> clazz)
     {
         super(new HashSet<>(initialCapacity, loadFactor));
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BHashSet(Class<ByteObj> clazz)
     {
         super(new HashSet<>());
+        initConstructor(clazz);
+    }
+
+    public BHashSet(byte[] objectBytesData)
+    {
+        super(objectBytesData);
+        initConstructor(null);
+    }
+
+    private void initConstructor(Class<ByteObj> clazz)
+    {
         try
         {
-            this.constructor = clazz.getConstructor(byte[].class);
+            constructor = clazz == null ? null : clazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(clazz);
         }
     }
-
+    
     @Override
     public byte[] serialize(HashSet<ByteObj> object)
     {
-        return ContainerSerializer.serialize(object);
+        return ContainerSerializer.serialize(object, this.constructor);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public HashSet<ByteObj> deserialize(byte[] objectBytesData)
     {
-        return ContainerSerializer.deserializeHashSet(objectBytesData, this.constructor);
+        DeserializeResult result = ContainerSerializer.deserializeIterable(objectBytesData, this.constructor);
+        this.constructor = (Constructor<ByteObj>) result.constructor()[0];
+        return (HashSet<ByteObj>) result.object();
     }
 
     public boolean add(ByteObj e)

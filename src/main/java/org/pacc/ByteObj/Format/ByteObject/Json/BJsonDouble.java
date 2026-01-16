@@ -11,6 +11,11 @@ public class BJsonDouble extends DirectByteObj<JsonDouble>
         super(object);
     }
 
+    public BJsonDouble(Double value)
+    {
+        super(new JsonDouble(value));
+    }
+
     public BJsonDouble(byte[] objectBytesData)
     {
         super(objectBytesData);

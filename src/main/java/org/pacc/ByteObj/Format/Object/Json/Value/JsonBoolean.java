@@ -6,9 +6,9 @@ import org.pacc.ByteObj.Format.Object.Json.JsonParser;
 public final class JsonBoolean implements JsonValue
 {
     @Setter
-    private boolean value;
+    private Boolean value;
 
-    public JsonBoolean(boolean value)
+    public JsonBoolean(Boolean value)
     {
         this.value = value;
     }

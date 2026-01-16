@@ -19,6 +19,11 @@ public class BJsonObj extends DirectByteObj<JsonObj>
         super(object);
     }
 
+    public BJsonObj(JsonProperty... properties)
+    {
+        super(new JsonObj(properties));
+    }
+
     public BJsonObj(byte[] objectBytesData)
     {
         super(objectBytesData);

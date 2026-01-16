@@ -1,6 +1,7 @@
 package org.pacc.ByteObj.Format.ByteObject.Json;
 
 import org.pacc.ByteObj.DirectByteObj;
+import org.pacc.ByteObj.Format.Object.Json.Value.JsonFloat;
 import org.pacc.ByteObj.Format.Object.Json.Value.JsonInteger;
 import org.pacc.ByteObj.Serializer.FormatObjSerializer;
 
@@ -9,6 +10,11 @@ public class BJsonInteger extends DirectByteObj<JsonInteger>
     public BJsonInteger(JsonInteger object)
     {
         super(object);
+    }
+
+    public BJsonInteger(Integer value)
+    {
+        super(new JsonInteger(value));
     }
 
     public BJsonInteger(byte[] objectBytesData)

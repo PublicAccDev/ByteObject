@@ -16,6 +16,16 @@ public class BCSVObj extends DirectByteObj<CSVObj>
         super(object);
     }
 
+    public BCSVObj(List<String> headers, List<String> values)
+    {
+        super(new CSVObj(headers, values));
+    }
+
+    public BCSVObj(List<List<String>> values)
+    {
+        super(new CSVObj(values));
+    }
+
     public BCSVObj(byte[] objectBytesData)
     {
         super(objectBytesData);

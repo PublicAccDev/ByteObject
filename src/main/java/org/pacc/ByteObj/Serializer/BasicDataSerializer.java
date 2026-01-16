@@ -1,9 +1,13 @@
 package org.pacc.ByteObj.Serializer;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class BasicDataSerializer
 {
+    public static final Charset Charset = StandardCharsets.UTF_8;
 
     public static byte[] serialize(boolean value)
     {
@@ -17,12 +21,12 @@ public class BasicDataSerializer
 
     public static byte[] serialize(char[] chars)
     {
-        return new String(chars).getBytes();
+        return new String(chars).getBytes(Charset);
     }
 
     public static char[] deserializeChars(byte[] bytes)
     {
-        return new String(bytes).toCharArray();
+        return new String(bytes, Charset).toCharArray();
     }
 
     public static byte[] serialize(double value)
@@ -67,11 +71,11 @@ public class BasicDataSerializer
 
     public static byte[] serialize(String value)
     {
-        return value.getBytes();
+        return value.getBytes(Charset);
     }
 
     public static String deserializeString(byte[] bytes)
     {
-        return new String(bytes);
+        return new String(bytes, Charset);
     }
 }

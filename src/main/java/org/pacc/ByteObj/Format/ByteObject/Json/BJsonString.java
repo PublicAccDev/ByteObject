@@ -11,6 +11,11 @@ public class BJsonString extends DirectByteObj<JsonString>
         super(object);
     }
 
+    public BJsonString(String value)
+    {
+        super(new JsonString(value));
+    }
+
     public BJsonString(byte[] objectBytesData)
     {
         super(objectBytesData);

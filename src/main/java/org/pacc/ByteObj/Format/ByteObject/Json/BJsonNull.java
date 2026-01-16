@@ -11,6 +11,11 @@ public class BJsonNull extends DirectByteObj<JsonNull>
         super(object);
     }
 
+    public BJsonNull()
+    {
+        super(new JsonNull());
+    }
+
     public BJsonNull(byte[] objectBytesData)
     {
         super(objectBytesData);

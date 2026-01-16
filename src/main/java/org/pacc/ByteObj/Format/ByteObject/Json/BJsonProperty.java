@@ -11,6 +11,62 @@ public class BJsonProperty extends DirectByteObj<JsonProperty>
         super(object);
     }
 
+    public <jsonValue extends JsonValue> BJsonProperty(String name, jsonValue value)
+    {
+        super(new JsonProperty(name, value));
+    }
+
+    public BJsonProperty(String name, String value)
+    {
+        super(new JsonProperty(name, value));
+    }
+
+    public BJsonProperty(String name, boolean value)
+    {
+        super(new JsonProperty(name, value));
+    }
+
+    public BJsonProperty(String name, Double value)
+    {
+        super(new JsonProperty(name, value));
+    }
+
+    public BJsonProperty(String name, Float value)
+    {
+        super(new JsonProperty(name, value));
+    }
+
+    public BJsonProperty(String name, Integer value)
+    {
+        super(new JsonProperty(name, value));
+    }
+
+    public BJsonProperty(String name, Long value)
+    {
+        super(new JsonProperty(name, value));
+    }
+
+    public BJsonProperty(String name, JsonArray value)
+    {
+        super(new JsonProperty(name, value));
+    }
+
+
+    public <jsonValue extends JsonValue> BJsonProperty(String name, jsonValue[] value)
+    {
+        super(new JsonProperty(name, value));
+    }
+
+    public BJsonProperty(String name, JsonObj value)
+    {
+        super(new JsonProperty(name, value));
+    }
+
+    public BJsonProperty(String name)
+    {
+        super(new JsonProperty(name, new JsonNull()));
+    }
+
     public BJsonProperty(byte[] objectBytesData)
     {
         super(objectBytesData);

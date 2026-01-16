@@ -4,9 +4,11 @@ import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
 import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
+import org.pacc.ByteObj.Serializer.DeserializeResult;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -14,64 +16,81 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class BLinkedHashSet<ByteObj extends DirectByteObj<?>> extends FastByteObj<LinkedHashSet<ByteObj>>
+public class BLinkedHashSet<ByteObj extends DirectByteObj<?>> extends DirectByteObj<LinkedHashSet<ByteObj>>
 {
-    private final Constructor<ByteObj> constructor;
+    private Constructor<ByteObj> constructor;
+
+    public BLinkedHashSet()
+    {
+        super(new LinkedHashSet<>());
+        initConstructor(null);
+    }
+
+    public BLinkedHashSet(LinkedHashSet<ByteObj> object)
+    {
+        super(object);
+        initConstructor(null);
+    }
+
+    public BLinkedHashSet(Collection<ByteObj> object)
+    {
+        super(new LinkedHashSet<>(object));
+        initConstructor(null);
+    }
+
+    public BLinkedHashSet(int initialCapacity)
+    {
+        super(new LinkedHashSet<>(initialCapacity));
+        initConstructor(null);
+    }
+
+    public BLinkedHashSet(int initialCapacity, float loadFactor)
+    {
+        super(new LinkedHashSet<>(initialCapacity, loadFactor));
+        initConstructor(null);
+    }
 
     public BLinkedHashSet(LinkedHashSet<ByteObj> object, Class<ByteObj> clazz)
     {
         super(object);
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BLinkedHashSet(Collection<ByteObj> object, Class<ByteObj> clazz)
     {
         super(new LinkedHashSet<>(object));
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BLinkedHashSet(int initialCapacity, Class<ByteObj> clazz)
     {
         super(new LinkedHashSet<>(initialCapacity));
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BLinkedHashSet(int initialCapacity, float loadFactor, Class<ByteObj> clazz)
     {
         super(new LinkedHashSet<>(initialCapacity, loadFactor));
-        try
-        {
-            this.constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BLinkedHashSet(Class<ByteObj> clazz)
     {
         super(new LinkedHashSet<>());
+        initConstructor(clazz);
+    }
+
+    public BLinkedHashSet(byte[] objectBytesData)
+    {
+        super(objectBytesData);
+        initConstructor(null);
+    }
+
+    private void initConstructor(Class<ByteObj> clazz)
+    {
         try
         {
-            this.constructor = clazz.getConstructor(byte[].class);
+            constructor = clazz == null ? null : clazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(clazz);
@@ -81,13 +100,16 @@ public class BLinkedHashSet<ByteObj extends DirectByteObj<?>> extends FastByteOb
     @Override
     public byte[] serialize(LinkedHashSet<ByteObj> object)
     {
-        return ContainerSerializer.serialize(object);
+        return ContainerSerializer.serialize(object, this.constructor);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public LinkedHashSet<ByteObj> deserialize(byte[] objectBytesData)
     {
-        return ContainerSerializer.deserializeLinkedHashSet(objectBytesData, this.constructor);
+        DeserializeResult result = ContainerSerializer.deserializeIterable(objectBytesData, this.constructor);
+        this.constructor = (Constructor<ByteObj>) result.constructor()[0];
+        return (LinkedHashSet<ByteObj>) result.object();
     }
 
     public boolean add(ByteObj e)

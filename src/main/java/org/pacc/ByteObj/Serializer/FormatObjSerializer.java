@@ -13,7 +13,7 @@ public class FormatObjSerializer
 
     public static CSVObj deserializeCSValues(byte[] bytes)
     {
-        return CSVObj.fromCSVString(new String(bytes));
+        return CSVObj.fromCSVString(new String(bytes, BasicDataSerializer.Charset));
     }
 
     public static byte[] serialize(JsonProperty property)
@@ -23,7 +23,7 @@ public class FormatObjSerializer
 
     public static JsonProperty deserializeJsonProperty(byte[] bytes)
     {
-        return JsonParser.parseProperty(new String(bytes));
+        return JsonParser.parseProperty(new String(bytes, BasicDataSerializer.Charset));
     }
 
     public static byte[] serialize(JsonArray object)
@@ -33,7 +33,7 @@ public class FormatObjSerializer
 
     public static JsonArray deserializeJsonArray(byte[] bytes)
     {
-        return JsonParser.parseArray(new String(bytes));
+        return JsonParser.parseArray(new String(bytes, BasicDataSerializer.Charset));
     }
 
     public static byte[] serialize(JsonBoolean object)
@@ -113,7 +113,7 @@ public class FormatObjSerializer
 
     public static JsonObj deserializeJsonObj(byte[] bytes)
     {
-        return JsonObj.fromString(new String(bytes));
+        return JsonObj.fromString(new String(bytes, BasicDataSerializer.Charset));
     }
 
 

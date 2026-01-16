@@ -4,6 +4,7 @@ import org.pacc.ByteObj.DirectByteObj;
 import org.pacc.ByteObj.Exception.BytesConstructorMissingException;
 import org.pacc.ByteObj.FastByteObj;
 import org.pacc.ByteObj.Serializer.ContainerSerializer;
+import org.pacc.ByteObj.Serializer.DeserializeResult;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayDeque;
@@ -14,52 +15,69 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class BArrayDeque<ByteObj extends DirectByteObj<?>> extends FastByteObj<ArrayDeque<ByteObj>>
+public class BArrayDeque<ByteObj extends DirectByteObj<?>> extends DirectByteObj<ArrayDeque<ByteObj>>
 {
-    private final Constructor<ByteObj> constructor;
+    private Constructor<ByteObj> constructor;
+
+    public BArrayDeque()
+    {
+        super(new ArrayDeque<>());
+        initConstructor(null);
+    }
+
+    public BArrayDeque(ArrayDeque<ByteObj> object)
+    {
+        super(object);
+        initConstructor(null);
+    }
+
+    public BArrayDeque(Collection<ByteObj> object)
+    {
+        super(new ArrayDeque<>(object));
+        initConstructor(null);
+    }
+
+    public BArrayDeque(int numElements)
+    {
+        super(new ArrayDeque<>(numElements));
+        initConstructor(null);
+    }
 
     public BArrayDeque(ArrayDeque<ByteObj> object, Class<ByteObj> clazz)
     {
         super(object);
-        try
-        {
-            constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BArrayDeque(Collection<ByteObj> object, Class<ByteObj> clazz)
     {
         super(new ArrayDeque<>(object));
-        try
-        {
-            constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BArrayDeque(int numElements, Class<ByteObj> clazz)
     {
         super(new ArrayDeque<>(numElements));
-        try
-        {
-            constructor = clazz.getConstructor(byte[].class);
-        } catch (NoSuchMethodException e)
-        {
-            throw new BytesConstructorMissingException(clazz);
-        }
+        initConstructor(clazz);
     }
 
     public BArrayDeque(Class<ByteObj> clazz)
     {
         super(new ArrayDeque<>());
+        initConstructor(clazz);
+    }
+
+    public BArrayDeque(byte[] objectBytesData)
+    {
+        super(objectBytesData);
+        initConstructor(null);
+    }
+
+    private void initConstructor(Class<ByteObj> clazz)
+    {
         try
         {
-            constructor = clazz.getConstructor(byte[].class);
+            constructor = clazz == null ? null : clazz.getConstructor(byte[].class);
         } catch (NoSuchMethodException e)
         {
             throw new BytesConstructorMissingException(clazz);
@@ -69,13 +87,16 @@ public class BArrayDeque<ByteObj extends DirectByteObj<?>> extends FastByteObj<A
     @Override
     public byte[] serialize(ArrayDeque<ByteObj> object)
     {
-        return ContainerSerializer.serialize(object);
+        return ContainerSerializer.serialize(object, this.constructor);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ArrayDeque<ByteObj> deserialize(byte[] objectBytesData)
     {
-        return ContainerSerializer.deserializeArrayDeque(objectBytesData, this.constructor);
+        DeserializeResult result = ContainerSerializer.deserializeIterable(objectBytesData, this.constructor);
+        this.constructor = (Constructor<ByteObj>) result.constructor()[0];
+        return (ArrayDeque<ByteObj>) result.object();
     }
 
     public void addFirst(ByteObj e)
